@@ -1,0 +1,4 @@
+Coloque aqui as fotos da suinocultura (JPG):
+  banner_suino.jpg  -> faixa do topo (imagem larga, ex.: 1600x300)
+  foto_suino.jpg    -> foto redonda ao lado do logo (quadrada)
+Sem elas, o painel mostra os porquinhos desenhados.
