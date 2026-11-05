@@ -83,6 +83,13 @@
   .destaques h2{margin:0 0 6px;font-size:17px;font-weight:700}
   .d-resumo{margin:0 0 12px;font-size:14.5px;line-height:1.55}
   .d-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
+.macro-ctl{display:flex;gap:16px;flex-wrap:wrap;margin:6px 0 14px}
+  .macro-ctl label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;color:var(--verde-esc)} .macro-ctl select{min-width:260px}
+  .mini{font-size:13px;margin:0 0 8px;color:var(--mut)} .mini summary{cursor:pointer}
+  .avanc{margin:0 0 12px;font-size:13.5px} .avanc summary{cursor:pointer;color:var(--mut);padding:4px 0}
+  @media(min-width:900px){.kpis.kpis5{grid-template-columns:repeat(5,minmax(0,1fr))}}
+  .kpis.kpis5>.kpi{grid-column:auto !important}   /* cartões da Visão macro: 5 por linha (as regras de span 4/5 são só dos cartões do topo) */
+  @media(max-width:899px){.kpis.kpis5{grid-template-columns:repeat(2,minmax(0,1fr))}}
   .d-bloco{background:var(--suave);border-radius:10px;padding:10px 12px}
   .d-bloco h3{margin:0 0 6px;font-size:13.5px;font-weight:600}
   .d-item{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:5px 0;border-bottom:1px solid var(--linha)}
@@ -180,6 +187,7 @@
     <label><span class="lb"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Projeto</span><select id="proj"><option value="">Todos</option></select></label>
     <label><span class="lb"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20v-1a6.5 6.5 0 0113 0v1"/><path d="M16 4.6a3.5 3.5 0 010 6.8M21.5 20v-1a6.5 6.5 0 00-4-6"/></svg>Supervisor</span><select id="sup"><option value="">Todos</option></select></label>
     <label><span class="lb"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0116 0v1"/></svg>Técnico</span><select id="tec"><option value="">Todos</option></select></label>
+    <label><span class="lb"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>Região</span><select id="reg"><option value="">Todas</option></select></label>
     <label><span class="lb"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11.5a7 7 0 10-14 0C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Município</span><select id="mun"><option value="">Todos</option></select></label>
     <label><span class="lb"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>Propriedade</span><select id="prop"><option value="">Todas</option></select></label>
     <label><span class="lb"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h12l-2 4 2 4H5"/></svg>Situação</span><select id="sit"><option value="">Ativas e inativas</option><option value="ativa">Só ativas</option><option value="inativa">Só inativas</option></select></label>
@@ -192,6 +200,7 @@
   <div class="ficha" id="ficha" style="display:none"></div>
   <div class="kpis" id="kpis"></div>
   <nav class="abas" role="tablist" aria-label="Seções do painel">
+    <button type="button" role="tab" class="aba" data-aba="macro" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>Visão macro</button>
     <button type="button" role="tab" class="aba on" data-aba="graficos" aria-selected="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Gráficos</button>
     <button type="button" role="tab" class="aba" data-aba="destaques" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>Destaques do mês</button>
     <button type="button" role="tab" class="aba" data-aba="causas" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Causas</button>
@@ -202,6 +211,22 @@
   <section class="destaques" id="destaques" hidden></section>
   <section class="destaques" id="causas" hidden></section>
   <section class="destaques" id="tipos" hidden></section>
+  <section class="destaques" id="macro" hidden>
+    <h2>Visão macro</h2>
+    <div class="macro-ctl">
+      <label>Comparar<select id="mmet" autocomplete="off"><option value="rec">Receita bruta</option><option value="prod">Animais vendidos (cabeças)</option><option value="vis">Visitas</option><option value="assist">Propriedades assistidas</option></select></label>
+      <label>Mostrar<select id="mgraf" autocomplete="off"><option value="valor">Valor no mês (ranking)</option><option value="cres">Crescimento</option></select></label>
+      <label>Agrupar por<select id="mniv" autocomplete="off"><option value="municipio">Município (todos)</option><option value="regiao">Região</option></select></label>
+    </div>
+    <details class="avanc"><summary>Opções avançadas (região e período de crescimento)</summary>
+    <div class="macro-ctl">
+      
+      <label>Região<select id="mreg" autocomplete="off"><option value="">Todas (agrupa pela escolha ao lado)</option></select></label>
+      <label hidden>Base de comparação<select id="mbase" autocomplete="off"><option value="lfl">Mesmas propriedades (só as que lançaram nos dois meses)</option><option value="todas">Todas as propriedades</option></select></label>
+      <label>Crescimento<select id="mper" autocomplete="off"><option value="dAno">Mês contra o mesmo mês do ano anterior</option><option value="dMes">Mês contra o mês anterior</option><option value="dTri">Trimestre contra o mesmo trimestre do ano anterior</option></select></label>
+    </div></details>
+    <div id="macroCorpo"><p class="d-vazio">Carregando…</p></div>
+  </section>
   <div class="graficos" id="aba-graficos">
     <section class="graf" style="--cor:var(--c-receita)"><div class="g-topo"><span class="ico g" data-ico="moedas"></span><div class="g-tit"><h2>Renda Bruta da Atividade (R$)</h2><p class="formula">Tudo que entrou na atividade, sem empréstimo nem investimento</p></div><div class="pill" id="pl-c1"><b>–</b><small>Total no período</small></div></div><div class="cv"><canvas id="c1"></canvas></div></section>
     <section class="graf" style="--cor:var(--c-desp)"><div class="g-topo"><span class="ico g" data-ico="milho"></span><div class="g-tit"><h2>COE da Atividade (R$)</h2><p class="formula">Custo Operacional Efetivo: gastos diretos da atividade, sem empréstimo, investimento e mão de obra familiar</p></div><div class="pill" id="pl-c7"><b>–</b><small>Total no período</small></div></div><div class="cv"><canvas id="c7"></canvas></div></section>
@@ -315,13 +340,13 @@ function preenche(sel, itens){
   sel.value = itens.includes(atual) ? atual : '';
 }
 async function carregaFiltros(){
-  const f = await (await fetch('/api/filtros?'+new URLSearchParams({projeto:$('proj').value, supervisor:$('sup').value, tecnico:$('tec').value, municipio:$('mun').value, situacao:$('sit').value, de:$('de').dataset.ok?$('de').value:'', ate:$('de').dataset.ok?$('ate').value:''}))).json();
+  const f = await (await fetch('/api/filtros?'+new URLSearchParams({projeto:$('proj').value, supervisor:$('sup').value, tecnico:$('tec').value, municipio:$('mun').value, regiao:$('reg').value, situacao:$('sit').value, de:$('de').dataset.ok?$('de').value:'', ate:$('de').dataset.ok?$('ate').value:''}))).json();
   if(!$('de').dataset.ok){ f.meses.forEach(m=>{$('de').add(new Option(m,m)); $('ate').add(new Option(m,m));}); $('de').value=f.meses[0];
     // abre sempre no último mês FECHADO: se o mais recente é o mês atual (ainda em lançamento), usa o anterior
     const hoje = new Date(), atual = hoje.getFullYear() + '-' + String(hoje.getMonth() + 1).padStart(2, '0');
     let fim = f.meses[f.meses.length-1]; if (fim === atual && f.meses.length > 1) fim = f.meses[f.meses.length-2];
     $('ate').value = fim; $('de').dataset.ok=1; }
-  preenche($('proj'), f.projetos); preenche($('sup'), f.supervisores); preenche($('tec'), f.tecnicos); preenche($('mun'), f.municipios);
+  preenche($('proj'), f.projetos); preenche($('sup'), f.supervisores); preenche($('tec'), f.tecnicos); preenche($('mun'), f.municipios); preenche($('reg'), f.regioes||[]);
   const pa = $('prop').value; $('prop').length = 1; f.propriedades.forEach(p=>$('prop').add(new Option(p.nome+' ('+p.id+')', p.id)));
   $('prop').value = f.propriedades.some(p=>String(p.id)===pa)?pa:'';
 }
@@ -371,9 +396,9 @@ async function carregaDestaques(q, parcial){
   box.innerHTML = `<h2>Destaques: ${d.mes}${a ? ' comparado a ' + a : ''}</h2><p class="d-resumo">${frase}</p>` + porque + (blocos ? `<div class="d-grid">${blocos}</div>` : '');
 }
 async function atualiza(){
-  const q = new URLSearchParams({projeto:$('proj').value, supervisor:$('sup').value, tecnico:$('tec').value, propriedade:$('prop').value, municipio:$('mun').value, situacao:$('sit').value, de:$('de').value, ate:$('ate').value});
+  const q = new URLSearchParams({projeto:$('proj').value, supervisor:$('sup').value, tecnico:$('tec').value, propriedade:$('prop').value, municipio:$('mun').value, regiao:$('reg').value, situacao:$('sit').value, de:$('de').value, ate:$('ate').value});
   // título da tela: o recorte escolhido nos filtros
-  const escopo = $('prop').value ? $('prop').selectedOptions[0].text : ($('tec').value || $('mun').value || $('sup').value || $('proj').value || 'Todas as propriedades');
+  const escopo = $('prop').value ? $('prop').selectedOptions[0].text : ($('tec').value || $('mun').value || $('reg').value || $('sup').value || $('proj').value || 'Todas as propriedades');
   $('titulo').textContent = escopo;
   $('periodo').textContent = 'Período: ' + $('de').value + ' a ' + $('ate').value;
   if($('prop').value){
@@ -406,6 +431,7 @@ async function atualiza(){
     cartao('Margem bruta da atividade', brl2(ult.margem_bruta), ult.var_margem_pct, d.map(x=>x.margem_bruta), 'var(--c-mat)', 'barras'),
     cartao('Margem bruta da venda de animais', brl2(ult.margem_venda), ult.var_margem_venda_pct, d.map(x=>x.margem_venda), 'var(--c-mvenda)', 'calc')
   ].join('') : '<p>Sem dados para o filtro.</p>';
+  if (abaAtual === 'macro') carregaMacro();
   carregaDestaques(q, parcial);
   carregaCausas(q);
   carregaTipos(q);
@@ -443,7 +469,9 @@ async function atualiza(){
       `<td class="sep">${brlc(x.margem_venda)}</td><td>${pct(x.var_margem_venda_pct)}</td>`+
       `<td class="sep">${nf.format(x.producao_media_produtor)}</td><td>${pct(x.var_prod_media_pct)}</td></tr>`).join('') + '</tbody>';
 }
-['proj','sup','tec','mun','sit'].forEach(id => $(id).onchange = async () => { await carregaFiltros(); atualiza(); });
+['proj','sup','tec','mun','reg','sit'].forEach(id => $(id).onchange = async () => { await carregaFiltros(); atualiza(); });
+$('mreg').onchange = () => { $('reg').value = $('mreg').value; $('reg').onchange(); };
+$('mniv').onchange = carregaMacro; $('mmet').onchange = desenhaMacro; $('mper').onchange = desenhaMacro; $('mgraf').onchange = desenhaMacro; $('mbase').onchange = desenhaMacro;
 $('prop').onchange=atualiza;
 ['de','ate'].forEach(i=>$(i).onchange=async()=>{ await carregaFiltros(); atualiza(); });
 $('btnAtualiza').onclick = async()=>{ await carregaFiltros(); atualiza(); };
@@ -547,6 +575,208 @@ async function carregaTipos(q){
     <h3 class="c-tit">Investimento e empréstimo</h3>
     <p class="d-resumo">Não entram na despesa direta nem na receita bruta (margem), mas a <b>soma de todas as despesas</b> inclui o investimento e o pagamento de empréstimo, como no Total Despesas do SisATeG. Total geral de receitas (com venda de bem e recebimento de empréstimo): <b>${brl2(d.receita_total)}</b>.</p>
     <div class="d-grid"><div class="d-bloco"><h3>Despesas: investimento e pagamento de empréstimo</h3>${tab(d.despesa_fora)}</div><div class="d-bloco"><h3>Receitas fora da receita bruta: venda de bem e recebimento de empréstimo</h3>${tab(d.receita_fora)}</div></div>`;
+}
+// ---- Aba "Visão macro": propriedades, visitas, receita e produção, comparando regiões (ou municípios de uma região) no tempo
+let macroDados = null, macroSort = {k: 'recAno', d: -1};
+const MM = {rec: 'Receita bruta', prod: 'Animais vendidos', vis: 'Visitas', assist: 'Propriedades assistidas'};
+const PERN = {dAno: 'mês contra o mesmo mês do ano anterior', dMes: 'mês contra o mês anterior', dTri: 'trimestre contra o mesmo trimestre do ano anterior'};
+const MCOR = ['#1d6b45', '#2b59a8', '#c9730a', '#a23b72', '#0b7a80', '#7a5ba6', '#c0392b', '#4a5d52'];
+async function carregaMacro(){
+  const q = new URLSearchParams({cadeia: 'suino', nivel: $('mniv').value, regiao: $('reg').value, situacao: $('sit').value, ate: $('ate').value});
+  for (const [k, v] of [...q]) if (!v) q.delete(k);
+  try { const r = await fetch('/api/macro?' + q); macroDados = r.ok ? await r.json() : {erro: 'HTTP ' + r.status + ' (veja o terminal do painel)'}; } catch(e) { macroDados = {erro: String(e)}; }
+  try { desenhaMacro(); } catch(e) { $('macroCorpo').innerHTML = '<p class="d-vazio">Erro ao desenhar a visão macro: ' + e.message + '</p>'; }
+}
+function sincronizaRegiaoMacro(){
+  const g = $('reg'), m = $('mreg'); if (!g || !m) return;
+  if (m.options.length !== g.options.length || m.value !== g.value) {
+    m.length = 1; [...g.options].slice(1).forEach(o => m.add(new Option(o.text, o.value))); m.value = g.value;
+  }
+}
+function desenhaMacro(){
+  sincronizaRegiaoMacro();
+  const box = $('macroCorpo'); let d = macroDados;
+  ['cm', 'cc'].forEach(k => { if (charts[k]) { charts[k].destroy(); delete charts[k]; } });
+  const avisos = d && d.avisos ? d.avisos.map(a => `<p class="d-vazio">⚠ ${a}</p>`).join('') : '';
+  if (d && d.erro) { box.innerHTML = '<p class="d-vazio">Não foi possível carregar a visão macro: ' + d.erro + '</p>'; return; }
+  if (!d || !d.meses || !d.meses.length) { box.innerHTML = '<p class="d-vazio">Sem dados para o filtro escolhido.</p>' + avisos; return; }
+  const meses = d.meses, de = $('de').value, unid = d.unidade, nivel = d.nivel;
+  const hoje = new Date(), atual = hoje.getFullYear() + '-' + String(hoje.getMonth() + 1).padStart(2, '0');
+  let ri = meses.length - 1;
+  while (ri > 0 && $('ate').value && meses[ri] > $('ate').value) ri--;
+  if (meses[ri] === atual && ri > 0) ri--;              // mês em andamento fica de fora das comparações
+  const ref = meses[ri];
+  // só entram municípios/regiões com lançamento de receita ou produção no mês de referência; os outros ficam numa lista recolhida
+  const temLanc = g => (g.rec && g.rec[ri]) || (g.prod && g.prod[ri]);
+  const semLancRef = d.grupos.filter(g => !temLanc(g)).map(g => g.nome).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  d = {...d, grupos: d.grupos.filter(temLanc)};
+  if (!d.grupos.length) { box.innerHTML = '<p class="d-vazio">Nenhum lançamento em ' + ref + ' para o filtro escolhido.</p>' + avisos; return; }
+  const v = (a, i) => (i >= 0 && i < a.length && a[i] != null) ? a[i] : 0;
+  const soma = (a, i, n) => { let s = 0; for (let k = 0; k < n; k++) s += v(a, i - k); return s; };
+  const pct = (a, b) => b ? Math.round((a / b - 1) * 1000) / 10 : null;
+  const F = ['rec', 'prod', 'vis', 'assist', 'props'];
+  const usaLfl = $('mbase').value === 'lfl';
+  const zeros = () => meses.map(() => 0);
+  // l = {"1":{cur,base}, "12":{cur,base}} (só receita e produção); sem l, compara os totais de cada mês
+  const calc0 = (a, l) => { const cur = v(a, ri);
+    if (l && !cur) return {cur, dMes: null, ano: null, dAno: null, delta: null, dTri: null};   // sem lançamento no mês: não é queda de 100%
+    if (usaLfl && l) {
+      const c1 = l['1'], c12 = l['12'], s3 = x => soma(x, ri, 3);
+      return {cur, dMes: ri >= 1 ? pct(c1.cur[ri], c1.base[ri]) : null, ano: ri >= 12 ? c12.base[ri] : null,
+        dAno: ri >= 12 ? pct(c12.cur[ri], c12.base[ri]) : null, delta: ri >= 12 ? c12.cur[ri] - c12.base[ri] : null,
+        dTri: ri >= 14 ? pct(s3(c12.cur), s3(c12.base)) : null};
+    }
+    return {cur, dMes: pct(cur, v(a, ri - 1)), ano: ri >= 12 ? v(a, ri - 12) : null, delta: ri >= 12 ? cur - v(a, ri - 12) : null,
+      dAno: ri >= 12 ? pct(cur, v(a, ri - 12)) : null, dTri: ri >= 14 ? pct(soma(a, ri, 3), soma(a, ri - 12, 3)) : null}; };
+  // além da comparação "mesmas propriedades", guarda a variação do total (usada em cinza quando não há propriedade em comum)
+  const calc = (a, l) => { const r = calc0(a, l);
+    if (l && r.cur) { r.tMes = pct(r.cur, v(a, ri - 1)); r.tAno = ri >= 12 ? pct(r.cur, v(a, ri - 12)) : null; r.tTri = ri >= 14 ? pct(soma(a, ri, 3), soma(a, ri - 12, 3)) : null; }
+    return r; };
+  const lflG = (g, f) => g.lfl && g.lfl[f] ? g.lfl[f] : null;
+  const grupos = d.grupos.map(g => { const m = {}; F.forEach(f => m[f] = calc(g[f], lflG(g, f))); return {...g, m}; });
+  const tot = {}; F.forEach(f => tot[f] = meses.map((_, i) => d.grupos.reduce((s, g) => s + v(g[f], i), 0)));
+  const totL = {}; ['rec', 'prod'].forEach(f => { totL[f] = {}; ['1', '12'].forEach(o => { totL[f][o] = {cur: zeros(), base: zeros()};
+    d.grupos.forEach(g => { const l = lflG(g, f); if (l) meses.forEach((_, i) => { totL[f][o].cur[i] += l[o].cur[i]; totL[f][o].base[i] += l[o].base[i]; }); }); }); });
+  const T = {}; F.forEach(f => T[f] = calc(tot[f], totL[f]));
+  const cadTotal = d.grupos.reduce((s, g) => s + (g.cadastro || 0), 0);
+  const fm = (f, x) => f === 'rec' ? 'R$ ' + nf.format(x) : nf.format(x) + (f === 'prod' && unid ? ' ' + unid : '');
+  const vs = x => x.dAno != null ? seta(x.dAno) + ' vs. mesmo mês do ano anterior' : seta(x.dMes) + ' vs. mês anterior';
+  const card = (rot, valor, sub, ic, cor, serie) => `<div class="kpi"><div class="k-topo">${icoGrande(ic, cor)}<span class="k-rot">${rot}</span></div><b>${valor}</b><div class="k-var">${sub}</div>${serie ? spark(serie.slice(0, ri + 1), cor) : ''}</div>`;
+  const cards = [
+    card('Propriedades cadastradas', nf.format(cadTotal), `${nf.format(T.props.cur)} com lançamento em ${ref}`, 'casa', '#4a5d52', tot.props),
+    card('Propriedades assistidas', nf.format(T.assist.cur), vs(T.assist), 'pessoas', '#7a5ba6', tot.assist),
+    card('Visitas', nf.format(T.vis.cur), vs(T.vis), 'calc', '#c9730a', tot.vis),
+    card('Receita bruta', 'R$ ' + nf.format(T.rec.cur), vs(T.rec), 'moedas', '#1d6b45', tot.rec),
+    unid ? card('Animais vendidos', fm('prod', T.prod.cur), vs(T.prod), 'gota', '#2b59a8', tot.prod) : ''
+  ].join('');
+  let met = $('mmet').value;
+  if (met === 'prod' && !unid) met = 'rec';
+  const dlMet = (g) => g.m[met];
+  // ---- quem mais cresceu / mais caiu (variação absoluta contra o mesmo mês do ano anterior)
+  const comp = grupos.filter(g => dlMet(g).ano != null && dlMet(g).dAno != null).map(g => ({nome: g.nome, delta: dlMet(g).delta, pct: dlMet(g).dAno, cur: dlMet(g).cur}));
+  const sobe = comp.filter(x => x.delta > 0).sort((a, b) => b.delta - a.delta).slice(0, 4);
+  const cai = comp.filter(x => x.delta < 0).sort((a, b) => a.delta - b.delta).slice(0, 4);
+  const lista = (l, vazio) => l.length ? l.map(x => `<div class="d-item"><span>${x.nome}</span><span>${(x.delta > 0 ? '+' : '−') + fm(met, Math.abs(x.delta))} ${x.pct != null ? seta(x.pct) : ''}</span></div>`).join('') : `<p class="d-vazio">${vazio}</p>`;
+  const destaques = `<div class="d-grid"><div class="d-bloco"><h3>Onde mais cresceu (${MM[met]}, ${ref} vs. ${ri >= 12 ? meses[ri - 12] : '–'})</h3>${lista(sobe, 'Nenhum crescimento no comparativo.')}</div>
+     <div class="d-bloco"><h3>Onde mais caiu (${MM[met]}, ${ref} vs. ${ri >= 12 ? meses[ri - 12] : '–'})</h3>${lista(cai, 'Nenhuma queda no comparativo.')}</div></div>`;
+  const per = $('mper').value;
+  const semLanc = grupos.filter(g => !g.m[met].cur).map(g => g.nome);   // sem lançamento no mês de referência: não é queda, fica fora das barras
+  const cres = grupos.filter(g => g.m[met].cur).map(g => ({nome: g.nome, x: g.m[met][per], cur: g.m[met].cur})).filter(z => z.x != null).sort((a, b) => b.x - a.x);
+  const semBase = $('mgraf').value === 'valor' ? [] : grupos.filter(g => g.m[met].cur && g.m[met][per] == null).map(g => g.nome);   // lançaram no mês, mas sem propriedade comparável
+  const modoVal = $('mgraf').value === 'valor';
+  const vals = grupos.filter(g => g.m[met].cur).map(g => ({nome: g.nome, cur: g.m[met].cur})).sort((a, b) => b.cur - a.cur);
+  const ncres = modoVal ? vals.length : cres.length;
+  // ---- tabela comparativa
+  const NM = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const mt = m => m ? NM[+m.slice(5) - 1] + '/' + m.slice(2, 4) : '–';
+  const mAnt = ri >= 1 ? mt(meses[ri - 1]) : '–', mAno = ri >= 12 ? mt(meses[ri - 12]) : '–';
+  const triAtual = ri >= 2 ? mt(meses[ri - 2]).slice(0, 3) + '–' + mt(meses[ri]) : '–', triAnt = ri >= 14 ? mt(meses[ri - 14]).slice(0, 3) + '–' + mt(meses[ri - 12]) : '–';
+  const colunas = [['nome', nivel === 'região' ? 'Região' : 'Município'], ['cad', 'Propriedades cadastradas'], ['props', 'Com lançamento'], ['assist', 'Assistidas'], ['vis', 'Visitas'],
+    ['rec', `Receita bruta<br>${mt(meses[ri])}`], ['recMes', `Receita<br>${mt(meses[ri])} vs ${mAnt}`], ['recAno', `Receita<br>${mt(meses[ri])} vs ${mAno}`], ['recTri', `Receita<br>${triAtual} vs ${triAnt}`], ...(unid ? [['prod', 'Produção'], ['prodAno', `Produção<br>${mt(meses[ri])} vs ${mAno}`]] : [])];
+  const chave = (g, k) => ({nome: g.nome, cad: g.cadastro, props: g.m.props.cur, assist: g.m.assist.cur, vis: g.m.vis.cur, rec: g.m.rec.cur, recMes: g.m.rec.dMes,
+      recAno: g.m.rec.dAno, recTri: g.m.rec.dTri, prod: g.m.prod.cur, prodAno: g.m.prod.dAno})[k];
+  const ord = [...grupos].sort((a, b) => { const x = chave(a, macroSort.k), y = chave(b, macroSort.k);
+      if (macroSort.k === 'nome') return macroSort.d * String(x).localeCompare(String(y), 'pt-BR');
+      return macroSort.d * ((x == null ? -1e18 : x) - (y == null ? -1e18 : y)); });
+  const sb = (x, m, k) => { if (x != null || !m.cur) return seta(x);
+    const t = m[k]; if (t != null) return `<span style="opacity:.6;font-style:italic" title="Nenhuma propriedade lançou nos dois períodos: esta é a variação do TOTAL, com propriedades diferentes">${seta(t)}</span>`;
+    return '<span style="color:var(--mut)" title="Não havia lançamento neste município/região no período anterior, então não dá para calcular o crescimento">sem base</span>'; };
+  const linha = (nome, g, b) => `<tr${b ? ' style="font-weight:700;background:var(--suave)"' : ''}><td${!b && nivel === 'região' ? ` class="lnk" data-reg="${nome}" style="cursor:pointer;text-decoration:underline dotted" title="Ver os municípios desta região"` : ''}>${nome}</td><td class="n">${nf.format(g.cad)}</td><td class="n">${nf.format(g.m.props.cur)}</td><td class="n">${nf.format(g.m.assist.cur)}</td>
+     <td class="n">${nf.format(g.m.vis.cur)}</td><td class="n">R$ ${nf.format(g.m.rec.cur)}</td><td class="n">${sb(g.m.rec.dMes, g.m.rec, 'tMes')}</td><td class="n">${sb(g.m.rec.dAno, g.m.rec, 'tAno')}</td><td class="n">${sb(g.m.rec.dTri, g.m.rec, 'tTri')}</td>
+     ${unid ? `<td class="n">${nf.format(g.m.prod.cur)}</td><td class="n">${sb(g.m.prod.dAno, g.m.prod, 'tAno')}</td>` : ''}</tr>`;
+  const tabela = `<div class="rolagem" style="max-height:460px"><table class="t-simples"><thead><tr>${colunas.map(([k, r]) => `<th class="${k === 'nome' ? '' : 'n'}" data-mk="${k}" style="cursor:pointer" title="Ordenar">${r}${macroSort.k === k ? (macroSort.d > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('')}</tr></thead><tbody>` +
+    linha('Total', {cadastro: cadTotal, cad: cadTotal, m: T}, true) + ord.map(g => linha(g.nome, {...g, cad: g.cadastro}, false)).join('') + `</tbody></table></div>`;
+  // ---- mapa de calor: variação contra o mesmo mês do ano anterior, últimos 12 meses
+  const ini = Math.max(12, ri - 11), idx = []; for (let i = ini; i <= ri; i++) idx.push(i);
+  const cinza = '<td style="background:#e6e9e7;color:#7a877f" title="Sem lançamento neste mês">–</td>';
+  const cel = (x, vazio) => { if (vazio) return cinza; if (x == null) return '<td title="Sem propriedades comparáveis nos dois meses" style="background:#f4f6f5"></td>'; const a = Math.min(Math.abs(x), 50) / 50, cor = x >= 0 ? '29,107,69' : '179,38,30';
+      return `<td style="background:rgba(${cor},${(0.12 + a * 0.7).toFixed(2)});color:${a > .55 ? '#fff' : 'var(--ink)'}">${x > 0 ? '+' : ''}${Math.round(x)}%</td>`; };
+  const hmGr = [...grupos].sort((a, b) => v(b[met], ri) - v(a[met], ri)).slice(0, 40);   // mapa de calor: os 40 maiores no mês de referência
+  const hm = idx.length ? `<div class="rolagem"><table class="hm"><thead><tr><th></th>${idx.map(i => `<th>${meses[i]}</th>`).join('')}</tr></thead><tbody>` +
+    hmGr.map(g => `<tr><td class="hn">${g.nome}</td>${idx.map(i => { const l = lflG(g, met);
+      if (!v(g[met], i)) return cel(null, true);
+      return cel(usaLfl && l ? pct(l['12'].cur[i], l['12'].base[i]) : pct(v(g[met], i), v(g[met], i - 12))); }).join('')}</tr>`).join('') +
+    `</tbody></table></div>` : '<p class="d-vazio">São necessários pelo menos 13 meses de histórico para comparar com o ano anterior.</p>';
+  const maxV = vals.length ? vals[0].cur : 1, totV = vals.reduce((s, z) => s + z.cur, 0) || 1;
+  const gm = Object.fromEntries(grupos.map(g => [g.nome, g.m[met]]));
+  const rankHtml = `<div class="rolagem" style="max-height:460px">` + vals.map((z, i) => { const m = gm[z.nome], x = m.dAno != null ? m.dAno : m.dMes;
+    const reg = nivel === 'região';
+    return `<div class="rk"${reg ? ` data-reg="${z.nome}" style="cursor:pointer" title="Clique para ver os municípios desta região"` : ''}><div style="display:grid;grid-template-columns:24px minmax(90px,1.2fr) 2fr auto 52px 92px;gap:8px;align-items:center;padding:6px 2px;border-bottom:1px solid var(--linha,#eadfce);font-size:13px">
+      <span style="color:var(--mut)">${i + 1}º</span><b style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${z.nome}">${reg ? '▸ ' : ''}${z.nome}</b>
+      <span style="background:#e9efe9;border-radius:4px;height:8px;display:block"><span style="display:block;height:8px;border-radius:4px;background:#1d6b45;width:${Math.max(2, z.cur / maxV * 100)}%"></span></span>
+      <span style="text-align:right;font-variant-numeric:tabular-nums"><b>${fm(met, z.cur)}</b></span>
+      <span style="text-align:right;color:var(--mut)" title="Participação no total">${fmt(z.cur / totV * 100, 1)}%</span>
+      <span style="text-align:right;white-space:nowrap" title="${m.dAno != null ? 'vs. mesmo mês do ano anterior' : 'vs. mês anterior'}">${x != null ? seta(x) : '<span style="color:var(--mut)">sem base</span>'}</span></div></div><div class="rk-sub" hidden></div>`; }).join('') + `</div>
+    <p class="d-resumo" style="margin-top:6px">Colunas: posição, ${nivel}, valor em ${ref}, participação no total e variação contra o mesmo mês do ano anterior.${nivel === 'região' ? ' <b>Clique numa região para ver os municípios dela.</b>' : ''}</p>`;
+  const volta = $('reg').value ? `<p style="margin:0 0 8px"><button type="button" class="btn mvolta" style="grid-column:auto;padding:6px 12px">← Voltar para todas as regiões</button> <span class="d-resumo">Região atual: <b>${$('reg').value}</b></span></p>` : '';
+  box.innerHTML = `<p class="d-resumo">Mês de referência: <b>${ref}</b> (último mês fechado). Por <b>${nivel}</b>${nivel === 'município' ? '' : ' — clique numa região da tabela para ver os municípios'}.</p>${avisos}
+    <div class="kpis kpis5" style="margin-bottom:14px">${cards}</div>
+    <div class="par2"><div>
+    ${volta}
+    ${modoVal ? `<h3 class="c-tit">${MM[met]} por ${nivel} em ${ref}</h3><p class="d-resumo">Valor de cada ${nivel} no mês de referência, do maior para o menor.</p>` : `<h3 class="c-tit">Crescimento de ${MM[met].toLowerCase()} por ${nivel}: ${PERN[$('mper').value]}</h3>
+    <p class="d-resumo">Cada barra é um(a) ${nivel}: ${usaLfl && (met === 'rec' || met === 'prod') ? 'compara só as propriedades que lançaram nos dois meses, para não contar propriedade nova como crescimento.' : 'compara o total de cada mês.'}</p>`}
+    ${semBase.length || semLancRef.length ? `<details class="mini"><summary>Quem não aparece nas barras (${semBase.length + semLancRef.length})</summary>${semBase.length ? `<p><b>Sem propriedade comparável (novas):</b> ${semBase.join(', ')}.</p>` : ''}${semLancRef.length ? `<p><b>Sem lançamento de corte em ${ref} (fora do painel neste mês):</b> ${semLancRef.join(', ')}.</p>` : ''}</details>` : ''}
+    ${modoVal ? rankHtml : `<div class="cv" style="height:${Math.max(300, 22 * ncres + 70)}px"><canvas id="cCres"></canvas></div>`}
+    </div><div>
+    <h3 class="c-tit" id="macTit">Evolução de ${MM[met].toLowerCase()} por ${nivel}</h3>
+    <p class="d-resumo" id="macSub">Os 8 maiores no período De/Até.</p>
+    <div class="cv" style="height:${Math.max(300, Math.min(22 * ncres + 70, 520))}px"><canvas id="cMacro"></canvas></div>
+    </div></div>
+    ${volta}
+    <h3 class="c-tit">Tabela comparativa (clique no título da coluna para ordenar)</h3>
+    <p class="d-resumo">Cada coluna de variação diz contra qual período compara. Só entram as propriedades que lançaram nos dois períodos; em <i>cinza itálico</i> está a variação do total quando nenhuma propriedade se repete, e <b>sem base</b> quando não havia lançamento antes. O mês de referência é o campo <b>Até</b>.</p>${tabela}
+    <details class="mini"><summary><b>Ver mapa de calor</b> (${MM[met].toLowerCase()} contra o mesmo mês do ano anterior, últimos 12 meses)</summary>
+    <p class="d-resumo">Verde = cresceu, vermelho = caiu em relação ao mesmo mês do ano anterior (intensidade até ±50%). Cinza com “–” = sem lançamento no mês (não é queda de 100%).${usaLfl && (met === 'rec' || met === 'prod') ? ' Comparação só com as propriedades que lançaram nos dois meses.' : ''}${grupos.length > 40 ? ' Mostra os 40 maiores em ' + ref + '.' : ''}</p>${hm}</details>`;
+  box.querySelectorAll('.rk[data-reg]').forEach(row => row.onclick = async () => {
+    const sub = row.nextElementSibling, nm = row.dataset.reg;
+    if (!sub.hidden) { sub.hidden = true; row.querySelector('b').textContent = '▸ ' + nm; desenhaMacro(); return; }
+    row.querySelector('b').textContent = '▾ ' + nm; sub.hidden = false; sub.innerHTML = '<p class="d-vazio">Carregando municípios…</p>';
+    try {
+      const q = new URLSearchParams({cadeia: 'suino', nivel: 'municipio', regiao: nm, situacao: $('sit').value, ate: $('ate').value});
+      for (const [k, v] of [...q]) if (!v) q.delete(k);
+      const r = await fetch('/api/macro?' + q), dm = await r.json(), ix = dm.meses.indexOf(ref);
+      const L = (dm.grupos || []).map(g => ({nome: g.nome, cur: ix >= 0 ? (g[met][ix] || 0) : 0})).filter(z => z.cur).sort((a, b) => b.cur - a.cur);
+      const tt = L.reduce((s, z) => s + z.cur, 0) || 1, mx = L.length ? L[0].cur : 1;
+      sub.innerHTML = L.length ? L.map((z, i) => `<div style="display:grid;grid-template-columns:24px minmax(90px,1.2fr) 2fr auto 52px;gap:8px;align-items:center;padding:4px 2px 4px 22px;background:#f7faf7;border-bottom:1px solid var(--linha,#eadfce);font-size:12.5px">
+        <span style="color:var(--mut)">${i + 1}º</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${z.nome}">${z.nome}</span>
+        <span style="background:#e9efe9;border-radius:4px;height:6px;display:block"><span style="display:block;height:6px;border-radius:4px;background:#5d9b7a;width:${Math.max(2, z.cur / mx * 100)}%"></span></span>
+        <span style="text-align:right;font-variant-numeric:tabular-nums">${fm(met, z.cur)}</span><span style="text-align:right;color:var(--mut)" title="Participação na região">${fmt(z.cur / tt * 100, 1)}%</span></div>`).join('')
+        : '<p class="d-vazio">Nenhum município com lançamento em ' + ref + '.</p>';
+      // o gráfico de linhas passa a mostrar os municípios da região escolhida
+      const fx = meses.map((m, i) => i).filter(i => meses[i] >= de && i <= ri);
+      const sm = (dm.grupos || []).map(g => ({nome: g.nome, s: fx.map(i => { const j = dm.meses.indexOf(meses[i]); return j >= 0 ? (g[met][j] || 0) : 0; })}))
+        .sort((a, b) => b.s.reduce((x, y) => x + y, 0) - a.s.reduce((x, y) => x + y, 0)).slice(0, 8);
+      if (sm.length && fx.length && $('cMacro')) {
+        if (charts.cm) charts.cm.destroy();
+        const tk = {color: getComputedStyle(document.documentElement).getPropertyValue('--mut').trim(), font: {size: 11}};
+        charts.cm = new Chart($('cMacro'), {type: 'line',
+          data: {labels: fx.map(i => meses[i]), datasets: sm.map((g, k) => ({label: g.nome, data: g.s, borderColor: MCOR[k % 8], backgroundColor: MCOR[k % 8], tension: .25, pointRadius: 2, borderWidth: 2}))},
+          options: {maintainAspectRatio: false, animation: reduz ? false : undefined, interaction: {mode: 'index', intersect: false},
+            plugins: {legend: {position: 'bottom', labels: {boxWidth: 12, font: {size: 11}}}, tooltip: {callbacks: {label: c => c.dataset.label + ': ' + fm(met, c.parsed.y)}}},
+            scales: {x: {ticks: tk, grid: {display: false}}, y: {ticks: {...tk, callback: x => met === 'rec' ? 'R$ ' + nf.format(x) : nf.format(x)}, beginAtZero: true}}}});
+        $('macTit').textContent = 'Evolução de ' + MM[met].toLowerCase() + ' por município: ' + nm;
+        $('macSub').textContent = 'Os 8 maiores municípios desta região no período De/Até. Clique de novo na região para voltar.';
+      }
+    } catch(e) { sub.innerHTML = '<p class="d-vazio">Não consegui carregar os municípios: ' + e.message + '</p>'; }
+  });
+  box.querySelectorAll('.mvolta').forEach(b => b.onclick = () => { $('mniv').value = 'regiao'; $('reg').value = ''; $('reg').onchange(); });
+  box.querySelectorAll('.mvolta').forEach(b => b.onclick = () => { $('mniv').value = 'regiao'; $('reg').value = ''; $('reg').onchange(); });
+  box.querySelectorAll('td.lnk').forEach(td => td.onclick = () => { $('reg').value = td.dataset.reg; $('reg').onchange(); });
+  box.querySelectorAll('th[data-mk]').forEach(th => th.onclick = () => { const k = th.dataset.mk; macroSort = {k, d: macroSort.k === k ? -macroSort.d : (k === 'nome' ? 1 : -1)}; desenhaMacro(); });
+  if (!modoVal && ncres) charts.cc = new Chart($('cCres'), {type: 'bar',
+    data: {labels: cres.map(z => z.nome), datasets: [{data: cres.map(z => Math.max(-300, Math.min(300, z.x))), backgroundColor: cres.map(z => z.x >= 0 ? '#1d6b45' : '#b3261e'), borderRadius: 3}]},
+    options: {indexAxis: 'y', maintainAspectRatio: false, animation: reduz ? false : undefined,
+      plugins: {legend: {display: false}, tooltip: {callbacks: {label: c => (cres[c.dataIndex].x > 0 ? '+' : '') + fmt(cres[c.dataIndex].x, 1) + '%  (atual: ' + fm(met, cres[c.dataIndex].cur) + ')'}}},
+      scales: {x: {ticks: {color: '#5a6a61', font: {size: 11}, callback: x => x + '%'}}, y: {ticks: {color: '#15251c', font: {size: 11}, autoSkip: false}, grid: {display: false}}}}});
+  // gráfico de linhas: os 8 maiores no período
+  const faixa = meses.map((m, i) => i).filter(i => meses[i] >= de && i <= ri);
+  const top = [...grupos].sort((a, b) => faixa.reduce((s, i) => s + v(b[met], i), 0) - faixa.reduce((s, i) => s + v(a[met], i), 0)).slice(0, 8);
+  const tick = {color: getComputedStyle(document.documentElement).getPropertyValue('--mut').trim(), font: {size: 11}};
+  if (top.length && faixa.length) charts.cm = new Chart($('cMacro'), {type: 'line',
+    data: {labels: faixa.map(i => meses[i]), datasets: top.map((g, k) => ({label: g.nome, data: faixa.map(i => v(g[met], i)), borderColor: MCOR[k % 8], backgroundColor: MCOR[k % 8], tension: .25, pointRadius: 2, borderWidth: 2}))},
+    options: {maintainAspectRatio: false, animation: reduz ? false : undefined, interaction: {mode: 'index', intersect: false},
+      plugins: {legend: {position: 'bottom', labels: {boxWidth: 12, font: {size: 11}}}, tooltip: {callbacks: {label: c => c.dataset.label + ': ' + fm(met, c.parsed.y)}}},
+      scales: {x: {ticks: tick, grid: {display: false}}, y: {ticks: {...tick, callback: x => met === 'rec' ? 'R$ ' + nf.format(x) : nf.format(x)}, beginAtZero: true}}}});
 }
 const numC = x => { if (x == null || x === '') return 0; if (typeof x === 'number') return isFinite(x) ? x : 0;
   let t = String(x).trim().replace(/\s|R\$/g, '');
@@ -673,11 +903,13 @@ let confArquivo = null, confTecArq = null;
 $('confArq').onchange = ev => { confArquivo = ev.target.files[0]; confTecArq = null; if (confArquivo) conferePlanilha(confArquivo); };
 $('confSit').onchange = () => { if (confArquivo) conferePlanilha(confArquivo); };
 $('confTec').onchange = () => { if (confArquivo) conferePlanilha(confArquivo); };
+let abaAtual = 'graficos';
 function mostraAba(nome){
-  const alvos = {graficos:'aba-graficos', destaques:'destaques', causas:'causas', tipos:'tipos', conf:'conf', tabela:'aba-tabela'};
+  const alvos = {macro:'macro', graficos:'aba-graficos', destaques:'destaques', causas:'causas', tipos:'tipos', conf:'conf', tabela:'aba-tabela'};
   Object.entries(alvos).forEach(([n, id]) => { $(id).hidden = (n !== nome); });
   document.querySelectorAll('.aba').forEach(b => { const on = b.dataset.aba === nome; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
-  if (nome === 'graficos' || nome === 'causas') Object.values(charts).forEach(c => c.resize());
+  abaAtual = nome; if (nome === 'macro') carregaMacro();
+  if (nome === 'graficos' || nome === 'causas' || nome === 'macro') Object.values(charts).forEach(c => c.resize());
 }
 document.querySelectorAll('.aba').forEach(b => b.onclick = () => mostraAba(b.dataset.aba));
 // Números negativos em vermelho em qualquer texto/tabela das abas (R$ -83,16, −R$ 1.200, -12,5%, ...)

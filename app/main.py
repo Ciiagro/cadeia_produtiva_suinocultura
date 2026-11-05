@@ -2,11 +2,12 @@
 Lê SOMENTE a view do servidor público (nunca o banco local)."""
 import os
 import re
+import time
 from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Query, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import create_engine, text
@@ -40,6 +41,32 @@ if not re.fullmatch(r"[A-Za-z0-9_]+\.[A-Za-z0-9_]+", TABLE):
 engine = create_engine(DB_URL, pool_pre_ping=True, pool_size=2, max_overflow=1, pool_recycle=300,
                        connect_args={"connect_timeout": 10})
 app = FastAPI(title="Acompanhamento mensal das cadeias")
+# Cache das respostas /api/*: os dados só mudam na atualização diária, então repetir a mesma consulta
+# (trocar de aba, voltar a um filtro, outro usuário abrindo o painel) não precisa ir ao banco de novo.
+# CACHE_TTL em segundos (padrão 300); CACHE_TTL=0 desliga. Vale por instância; na Vercel o s-maxage
+# deixa também a borda guardar a resposta.
+_CACHE_TTL = int(os.environ.get("CACHE_TTL", "300"))
+_CACHE: dict = {}
+
+
+@app.middleware("http")
+async def cache_api(request: Request, call_next):
+    if request.method != "GET" or not request.url.path.startswith("/api/") or _CACHE_TTL <= 0:
+        return await call_next(request)
+    chave = request.url.path + "?" + request.url.query
+    agora = time.time()
+    cab = {"Cache-Control": f"public, max-age=60, s-maxage={_CACHE_TTL}, stale-while-revalidate={_CACHE_TTL * 2}"}
+    hit = _CACHE.get(chave)
+    if hit and agora - hit[0] < _CACHE_TTL:
+        return Response(hit[1], media_type="application/json", headers={**cab, "X-Cache": "HIT"})
+    resp = await call_next(request)
+    if resp.status_code != 200:
+        return resp
+    corpo = b"".join([c async for c in resp.body_iterator])
+    if len(_CACHE) >= 300:   # limite simples para não crescer sem fim
+        _CACHE.clear()
+    _CACHE[chave] = (agora, corpo)
+    return Response(corpo, status_code=200, media_type="application/json", headers={**cab, "X-Cache": "MISS"})
 templates = Jinja2Templates(directory=str(Path(__file__).parent / "templates"))
 # Fotos da suinocultura: colocar banner_suino.jpg e foto_suino.jpg em app/static/ (aparecem em /img/...). Sem elas, o painel usa os porquinhos desenhados.
 _static = Path(__file__).parent / "static"
@@ -52,9 +79,10 @@ def index(request: Request):
     return templates.TemplateResponse(request, "index.html")
 
 
-def _where(supervisor=None, tecnico=None, projeto=None, propriedade=None, situacao=None, municipio=None):
+def _where(supervisor=None, tecnico=None, projeto=None, propriedade=None, situacao=None, municipio=None, regiao=None):
     """Monta WHERE + parâmetros para os filtros (mesmas colunas nas duas views)."""
-    w, p = ["1=1"], {}
+    # Regra fixa: o projeto TREINAMENTO SP nunca aparece (filtros, gráficos, destaques, causas, tabelas, Excel)
+    w, p = ["COALESCE(projeto, '') NOT ILIKE 'TREINAMENTO%'"], {}
     if supervisor:
         w.append("supervisor = :s"); p["s"] = supervisor
     if tecnico:
@@ -65,6 +93,8 @@ def _where(supervisor=None, tecnico=None, projeto=None, propriedade=None, situac
         w.append("id_propriedade = :pr"); p["pr"] = propriedade
     if municipio:
         w.append("municipio = :mu"); p["mu"] = municipio
+    if regiao:
+        w.append("regiao = :rg"); p["rg"] = regiao
     if situacao == "ativa":
         w.append("ativa")
     elif situacao == "inativa":
@@ -74,7 +104,7 @@ def _where(supervisor=None, tecnico=None, projeto=None, propriedade=None, situac
 
 @app.get("/api/filtros")
 def filtros(supervisor: str | None = None, tecnico: str | None = None, projeto: str | None = None,
-            municipio: str | None = None, situacao: str | None = None,
+            municipio: str | None = None, situacao: str | None = None, regiao: str | None = None,
             de: str | None = Query(None, description="YYYY-MM"), ate: str | None = Query(None, description="YYYY-MM")):
     """Listas dos filtros. Cada lista respeita TODOS os outros filtros já escolhidos (filtros em cascata)."""
     def _periodo(w, p):
@@ -83,7 +113,7 @@ def filtros(supervisor: str | None = None, tecnico: str | None = None, projeto: 
             w.append("mes >= :pde"); p["pde"] = max(de, MES_INICIO)
         if ate:
             w.append("mes <= :pate"); p["pate"] = ate
-    escolhidos = {"supervisor": supervisor, "tecnico": tecnico, "projeto": projeto, "municipio": municipio}
+    escolhidos = {"supervisor": supervisor, "tecnico": tecnico, "projeto": projeto, "municipio": municipio, "regiao": regiao}
     with engine.connect() as con:
         def lista(coluna):
             outros = {k: v for k, v in escolhidos.items() if k != coluna}
@@ -92,14 +122,14 @@ def filtros(supervisor: str | None = None, tecnico: str | None = None, projeto: 
             _periodo(w, p)
             return [r[0] for r in con.execute(text(
                 f"SELECT DISTINCT {coluna} FROM {TABLE} WHERE {' AND '.join(w)} ORDER BY 1"), p)]
-        projetos, sups, tecs, muns = lista("projeto"), lista("supervisor"), lista("tecnico"), lista("municipio")
-        w2, p2 = _where(supervisor, tecnico, projeto, None, situacao, municipio)
+        projetos, sups, tecs, muns, regs = lista("projeto"), lista("supervisor"), lista("tecnico"), lista("municipio"), lista("regiao")
+        w2, p2 = _where(supervisor, tecnico, projeto, None, situacao, municipio, regiao)
         _periodo(w2, p2)
         props = [{"id": r[0], "nome": r[1]} for r in con.execute(text(
             f"SELECT DISTINCT id_propriedade, COALESCE(propriedade, 'Propriedade ' || id_propriedade) "
             f"FROM {TABLE} WHERE {' AND '.join(w2)} ORDER BY 2"), p2)]
         meses = [r[0] for r in con.execute(text(f"SELECT DISTINCT mes FROM {TABLE} WHERE mes >= :mi ORDER BY 1"), {"mi": MES_INICIO})]
-    return {"projetos": projetos, "supervisores": sups, "tecnicos": tecs, "municipios": muns, "propriedades": props, "meses": meses}
+    return {"projetos": projetos, "supervisores": sups, "tecnicos": tecs, "municipios": muns, "regioes": regs, "propriedades": props, "meses": meses}
 
 
 @app.get("/api/propriedade/{id_propriedade}")
@@ -125,9 +155,9 @@ def propriedade(id_propriedade: int):
 
 @app.get("/api/serie")
 def serie(supervisor: str | None = None, tecnico: str | None = None, propriedade: int | None = None,
-          projeto: str | None = None, situacao: str | None = None, municipio: str | None = None,
+          projeto: str | None = None, situacao: str | None = None, municipio: str | None = None, regiao: str | None = None,
           de: str | None = Query(None, description="YYYY-MM"), ate: str | None = Query(None, description="YYYY-MM")):
-    where, p = _where(supervisor, tecnico, projeto, propriedade, situacao, municipio)
+    where, p = _where(supervisor, tecnico, projeto, propriedade, situacao, municipio, regiao=regiao)
     p["de"] = max(de or MES_INICIO, MES_INICIO)
     where.append("mes >= :de")
     if ate:
@@ -144,7 +174,7 @@ def serie(supervisor: str | None = None, tecnico: str | None = None, propriedade
                COUNT(DISTINCT produtor)                 AS produtores
         FROM {TABLE} WHERE {' AND '.join(where)}
         GROUP BY mes ORDER BY mes"""
-    wp, pp = _where(supervisor, tecnico, projeto, propriedade, None, municipio)
+    wp, pp = _where(supervisor, tecnico, projeto, propriedade, None, municipio, regiao=regiao)
     # o card conta as propriedades ativas hoje; no filtro 'Inativas' conta as inativas
     wp.append("NOT ativa" if situacao == "inativa" else "ativa")
     with engine.connect() as con:
@@ -180,13 +210,13 @@ def serie(supervisor: str | None = None, tecnico: str | None = None, propriedade
 
 @app.get("/api/destaques")
 def destaques(supervisor: str | None = None, tecnico: str | None = None, propriedade: int | None = None,
-              projeto: str | None = None, situacao: str | None = None, municipio: str | None = None,
+              projeto: str | None = None, situacao: str | None = None, municipio: str | None = None, regiao: str | None = None,
               ate: str | None = Query(None, description="YYYY-MM"),
               de: str | None = Query(None, description="YYYY-MM")):
     """Destaques automáticos do mês de referência (por regras, sem IA): comparam o mês com o anterior,
     dentro dos filtros escolhidos. Se o último mês ainda está em andamento, usa o mês anterior (fechado)."""
     from datetime import date
-    where, p = _where(supervisor, tecnico, projeto, propriedade, situacao, municipio)
+    where, p = _where(supervisor, tecnico, projeto, propriedade, situacao, municipio, regiao=regiao)
     wsql = " AND ".join(where)
     sub = {"mi": MES_INICIO}
     sql_m = f"SELECT DISTINCT mes FROM {TABLE} WHERE mes >= :mi "
@@ -300,12 +330,12 @@ DESP = os.environ.get("DESP_NAME", "public.vw_suino_despesa_subgrupo")
 
 @app.get("/api/causas")
 def causas(supervisor: str | None = None, tecnico: str | None = None, propriedade: int | None = None,
-           projeto: str | None = None, situacao: str | None = None, municipio: str | None = None,
+           projeto: str | None = None, situacao: str | None = None, municipio: str | None = None, regiao: str | None = None,
            de: str | None = Query(None, description="YYYY-MM"), ate: str | None = Query(None, description="YYYY-MM")):
     """Aba 'Causas' (por regras, sem IA): quando as propriedades entraram/saíram, preço por animal fora do normal
     e despesa direta por subgrupo. Tudo dentro dos filtros escolhidos."""
     from datetime import date
-    where, p = _where(supervisor, tecnico, projeto, propriedade, situacao, municipio)
+    where, p = _where(supervisor, tecnico, projeto, propriedade, situacao, municipio, regiao=regiao)
     wsql = " AND ".join(where)
     pp = {**p, "mi": MES_INICIO}
     cate = ""
@@ -417,10 +447,10 @@ TIPO = os.environ.get("TIPO_NAME", "public.vw_suino_tipo")
 
 @app.get("/api/tipos")
 def tipos(supervisor: str | None = None, tecnico: str | None = None, propriedade: int | None = None,
-          projeto: str | None = None, situacao: str | None = None, municipio: str | None = None,
+          projeto: str | None = None, situacao: str | None = None, municipio: str | None = None, regiao: str | None = None,
           de: str | None = Query(None, description="YYYY-MM"), ate: str | None = Query(None, description="YYYY-MM")):
     """Aba 'Receitas e despesas': receita bruta, despesa direta e despesa total, abertas por tipo (subgrupo), no período e filtros."""
-    where, p = _where(supervisor, tecnico, projeto, propriedade, situacao, municipio)
+    where, p = _where(supervisor, tecnico, projeto, propriedade, situacao, municipio, regiao=regiao)
     wsql = " AND ".join(where)
     pp = {**p, "de": max(de or MES_INICIO, MES_INICIO)}
     cate = ""
@@ -444,6 +474,90 @@ def tipos(supervisor: str | None = None, tecnico: str | None = None, propriedade
     return {"de": ms["a"] if ms else None, "ate": ms["b"] if ms else None,
             "receita_bruta": rb, "receita_fora": rf, "despesa_direta": dd, "despesa_outras": od, "despesa_fora": df,
             "despesa_total": desp_total, "receita_total": rec_total, "margem_bruta": rb["total"] - dd["total"]}
+
+
+# ----------------------------------------------------------------------------------------------------------------
+# VISÃO MACRO: todas as propriedades, visitas, receita e produção (animais vendidos, cabeças), comparando regiões (ou municípios de uma região) no tempo.
+# Lê só views do servidor público. O que não existir vira aviso, não erro.
+# ----------------------------------------------------------------------------------------------------------------
+def _norm(t):
+    import unicodedata
+    t = unicodedata.normalize("NFD", t or "")
+    return " ".join("".join(c for c in t if unicodedata.category(c) != "Mn").upper().split())
+
+
+@app.get("/api/macro")
+def macro(cadeia: str = "suino", regiao: str | None = None, situacao: str | None = None, nivel: str | None = None,
+          ate: str | None = Query(None, description="YYYY-MM")):
+    """Séries mensais por região (ou por município, se uma região foi escolhida): propriedades, visitas, receita e animais vendidos."""
+    por_mun = bool(regiao) or nivel == "municipio"
+    gcol = "municipio" if por_mun else "regiao"
+    avisos, grupos, nomes = [], {}, {}
+    meses_set = set()
+
+    def g(nome):
+        k = _norm(nome) if nome else "SEM REGIAO"
+        nomes.setdefault(k, nome or "Sem região")
+        return grupos.setdefault(k, {"cad": 0, "rec": {}, "prod": {}, "props": {}, "vis": {}, "assist": {}, "pp": {}})
+
+    where, p = _where(None, None, None, None, situacao, None, regiao)
+    wsql = " AND ".join(where)
+    pp = {**p, "mi": MES_INICIO}
+    cate = ""
+    if ate:
+        cate = " AND mes <= :ate"; pp["ate"] = ate
+    with engine.connect() as con:
+        try:
+            for r in con.execute(text(f"""SELECT mes, {gcol} AS grupo, id_propriedade, SUM(receita_bruta) AS rec, SUM(animais_vendidos) AS prod
+                     FROM {TABLE} WHERE {wsql} AND mes >= :mi{cate} GROUP BY 1, 2, 3"""), pp).mappings():
+                x = g(r["grupo"]); m = r["mes"]; meses_set.add(m)
+                rec, prod = float(r["rec"] or 0), float(r["prod"] or 0)
+                x["rec"][m] = x["rec"].get(m, 0) + rec
+                x["prod"][m] = x["prod"].get(m, 0) + prod
+                x["props"][m] = x["props"].get(m, 0) + 1
+                x["pp"].setdefault(("api", r["id_propriedade"]), {})[m] = (rec, prod)
+            for r in con.execute(text(f"""SELECT {gcol} AS grupo, COUNT(DISTINCT id_propriedade) AS n
+                     FROM {PROPS} WHERE {wsql} GROUP BY 1"""), pp).mappings():
+                g(r["grupo"])["cad"] += int(r["n"] or 0)
+        except Exception as e:
+            con.rollback()
+            avisos.append(f"suinocultura: não consegui ler ({str(e).splitlines()[0][:120]}). Rode a atualização desse painel.")
+        # Visitas e propriedades assistidas: SÓ da suinocultura.
+        # Conta as visitas que geraram lançamento da suinocultura (id_visita da própria base da suinocultura), sem misturar
+        # visitas de outras atividades da mesma propriedade. Respeita os mesmos filtros de "Com lançamento".
+        try:
+            for r in con.execute(text(f"""SELECT mes, {gcol} AS grupo, COUNT(DISTINCT id_visita) AS vis, COUNT(DISTINCT id_propriedade) AS assist
+                     FROM {TABLE} WHERE {wsql} AND mes >= :mi{cate} AND id_visita IS NOT NULL GROUP BY 1, 2"""), pp).mappings():
+                x = g(r["grupo"]); m = r["mes"]; meses_set.add(m)
+                x["vis"][m] = int(r["vis"] or 0); x["assist"][m] = int(r["assist"] or 0)
+        except Exception as e:
+            con.rollback()
+            avisos.append(f"visitas: não consegui ler ({str(e).splitlines()[0][:120]})")
+    meses = sorted(meses_set)
+    out = []
+    for k, x in grupos.items():
+        if not x["cad"] and not any(x["rec"].values()) and not any(x["prod"].values()):
+            continue   # só visitas de outra atividade: fora do painel desta cadeia
+        # "Mesmas propriedades": o mês só é comparado com as propriedades que tiveram valor (>0) nos DOIS meses comparados
+        lfl = {}
+        for fi, f in ((0, "rec"), (1, "prod")):
+            lfl[f] = {}
+            for off in (1, 12):
+                cur, base = [], []
+                for i in range(len(meses)):
+                    c = b = 0.0
+                    if i >= off:
+                        for vals in x["pp"].values():
+                            a_, b_ = vals.get(meses[i]), vals.get(meses[i - off])
+                            if a_ and b_ and a_[fi] > 0 and b_[fi] > 0:
+                                c += a_[fi]; b += b_[fi]
+                    cur.append(round(c, 2)); base.append(round(b, 2))
+                lfl[f][str(off)] = {"cur": cur, "base": base}
+        out.append({"nome": nomes[k], "cadastro": x["cad"], "lfl": lfl,
+                    **{f: [x[f].get(m) for m in meses] for f in ("rec", "prod", "props", "vis", "assist")}})
+    out.sort(key=lambda z: -sum(v or 0 for v in z["rec"]))
+    return {"nivel": "município" if por_mun else "região", "cadeia": "suino", "unidade": "animais",
+            "meses": meses, "grupos": out, "avisos": avisos}
 
 
 @app.get("/api/conferencia")

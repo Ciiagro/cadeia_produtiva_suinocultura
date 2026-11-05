@@ -169,6 +169,11 @@ tec_mes AS (  -- técnico responsável pela visita daquele mês (técnico da ép
   JOIN public.acompanhamento_mensal_visitas av ON av.id_visita::text = b.id_visita::text
   GROUP BY 1, 2
 ),
+vis AS (  -- visita(s) do mês (normalmente uma): serve para contar visitas na Visão macro
+  SELECT b.id_propriedade, date_trunc('month', b.dt_referencia)::date AS mes,
+         string_agg(DISTINCT b.id_visita::text, ',' ORDER BY b.id_visita::text) AS id_visita
+  FROM base b GROUP BY 1, 2
+),
 fin AS (
   SELECT id_propriedade, mes,
     SUM(qtd)   FILTER (WHERE venda_cab)                                              AS animais_vendidos,
@@ -191,9 +196,11 @@ SELECT f.id_propriedade,
        ROUND(f.receita_bruta::numeric, 2)        AS receita_bruta,
        ROUND(f.despesa_direta::numeric, 2)       AS despesa_direta,
        ROUND(f.mao_obra_familiar::numeric, 2)    AS mao_obra_familiar,
-       ROUND(f.despesa_total::numeric, 2)        AS despesa_total
+       ROUND(f.despesa_total::numeric, 2)        AS despesa_total,
+       vs.id_visita
 FROM fin f
-LEFT JOIN tec_mes t ON t.id_propriedade = f.id_propriedade AND t.mes = f.mes;
+LEFT JOIN tec_mes t ON t.id_propriedade = f.id_propriedade AND t.mes = f.mes
+LEFT JOIN vis vs ON vs.id_propriedade = f.id_propriedade AND vs.mes = f.mes;
 
 CREATE INDEX ON public.resumo_suino_mensal (id_propriedade);
 CREATE INDEX ON public.resumo_suino_mensal (tecnico);
