@@ -196,21 +196,31 @@
     <button type="button" role="tab" class="aba" data-aba="destaques" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>Destaques do mês</button>
     <button type="button" role="tab" class="aba" data-aba="causas" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Causas</button>
     <button type="button" role="tab" class="aba" data-aba="tipos" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Receitas e despesas</button>
+    <button type="button" role="tab" class="aba" data-aba="conf" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Conferência</button>
     <button type="button" role="tab" class="aba" data-aba="tabela" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16"/></svg>Tabela mensal</button>
   </nav>
   <section class="destaques" id="destaques" hidden></section>
   <section class="destaques" id="causas" hidden></section>
   <section class="destaques" id="tipos" hidden></section>
   <div class="graficos" id="aba-graficos">
-    <section class="graf" style="--cor:var(--c-receita)"><div class="g-topo"><span class="ico g" data-ico="moedas"></span><div class="g-tit"><h2>Receita bruta (R$)</h2><p class="formula">Tudo que entrou na atividade, sem empréstimo nem investimento</p></div><div class="pill" id="pl-c1"><b>–</b><small>Total no período</small></div></div><div class="cv"><canvas id="c1"></canvas></div></section>
-    <section class="graf" style="--cor:var(--c-desp)"><div class="g-topo"><span class="ico g" data-ico="milho"></span><div class="g-tit"><h2>Despesa direta (R$)</h2><p class="formula">Gastos diretos da atividade, sem empréstimo, investimento e mão de obra familiar</p></div><div class="pill" id="pl-c7"><b>–</b><small>Total no período</small></div></div><div class="cv"><canvas id="c7"></canvas></div></section>
-    <section class="graf" style="--cor:var(--c-venda)"><div class="g-topo"><span class="ico g" data-ico="leitao"></span><div class="g-tit"><h2>Venda de animais (R$)</h2><p class="formula">Animais vivos (leitão, matriz, reprodutor...) + terminação para abate</p></div><div class="pill" id="pl-c6"><b>–</b><small>Total no período</small></div></div><div class="cv"><canvas id="c6"></canvas></div></section>
-    <section class="graf" style="--cor:var(--c-venda)"><div class="g-topo"><span class="ico g" data-ico="garrafa"></span><div class="g-tit"><h2>Preço médio por animal vendido (R$)</h2><p class="formula">Média dos preços das propriedades: venda de animais ÷ animais vendidos</p></div><div class="pill" id="pl-c8"><b>–</b><small>Total no período</small></div></div><div class="cv"><canvas id="c8"></canvas></div></section>
-    <section class="graf" style="--cor:var(--c-prod)"><div class="g-topo"><span class="ico g" data-ico="gota"></span><div class="g-tit"><h2>Animais vendidos (cabeças)</h2><p class="formula">Vivos + abate (em cabeças)</p></div><div class="pill" id="pl-c2"><b>–</b><small>Total no período</small></div></div><div class="cv"><canvas id="c2"></canvas></div></section>
+    <section class="graf" style="--cor:var(--c-receita)"><div class="g-topo"><span class="ico g" data-ico="moedas"></span><div class="g-tit"><h2>Renda Bruta da Atividade (R$)</h2><p class="formula">Tudo que entrou na atividade, sem empréstimo nem investimento</p></div><div class="pill" id="pl-c1"><b>–</b><small>Total no período</small></div></div><div class="cv"><canvas id="c1"></canvas></div></section>
+    <section class="graf" style="--cor:var(--c-desp)"><div class="g-topo"><span class="ico g" data-ico="milho"></span><div class="g-tit"><h2>COE da Atividade (R$)</h2><p class="formula">Custo Operacional Efetivo: gastos diretos da atividade, sem empréstimo, investimento e mão de obra familiar</p></div><div class="pill" id="pl-c7"><b>–</b><small>Total no período</small></div></div><div class="cv"><canvas id="c7"></canvas></div></section>
     <section class="graf" style="--cor:var(--c-mat)"><div class="g-topo"><span class="ico g" data-ico="barras"></span><div class="g-tit"><h2>Margem bruta da atividade (R$)</h2><p class="formula">Receita bruta &minus; despesa direta</p></div><div class="pill" id="pl-c3"><b>–</b><small>Total no período</small></div></div><div class="cv"><canvas id="c3"></canvas></div></section>
+    <section class="graf" style="--cor:var(--c-venda)"><div class="g-topo"><span class="ico g" data-ico="leitao"></span><div class="g-tit"><h2>Renda Bruta da Venda de Animais (R$)</h2><p class="formula">Animais vivos (leitão, matriz, reprodutor...) + terminação para abate</p></div><div class="pill" id="pl-c6"><b>–</b><small>Total no período</small></div></div><div class="cv"><canvas id="c6"></canvas></div></section>
+    <section class="graf" style="--cor:var(--c-desp)"><div class="g-topo"><span class="ico g" data-ico="calc"></span><div class="g-tit"><h2>COE da Atividade / Animal vendido (R$/animal)</h2><p class="formula">COE &divide; animais vendidos no mês</p></div><div class="pill" id="pl-c11"><b>–</b><small>Média no período</small></div></div><div class="cv"><canvas id="c11"></canvas></div></section>
     <section class="graf" style="--cor:var(--c-mvenda)"><div class="g-topo"><span class="ico g" data-ico="calc"></span><div class="g-tit"><h2>Margem bruta da venda de animais (R$)</h2><p class="formula">Venda de animais &minus; despesa direta</p></div><div class="pill" id="pl-c4"><b>–</b><small>Total no período</small></div></div><div class="cv"><canvas id="c4"></canvas></div></section>
+    <section class="graf" style="--cor:var(--c-prod)"><div class="g-topo"><span class="ico g" data-ico="gota"></span><div class="g-tit"><h2>Animais vendidos (cabeças)</h2><p class="formula">Vivos + abate (em cabeças)</p></div><div class="pill" id="pl-c2"><b>–</b><small>Total no período</small></div></div><div class="cv"><canvas id="c2"></canvas></div></section>
     <section class="graf" style="--cor:var(--c-media)"><div class="g-topo"><span class="ico g" data-ico="pessoas"></span><div class="g-tit"><h2>Animais vendidos por produtor (cabeças)</h2><p class="formula">Animais vendidos ÷ produtores com lançamento no mês</p></div><div class="pill" id="pl-c5"><b>–</b><small>Total no período</small></div></div><div class="cv"><canvas id="c5"></canvas></div></section>
+    <section class="graf" style="--cor:var(--c-venda)"><div class="g-topo"><span class="ico g" data-ico="garrafa"></span><div class="g-tit"><h2>Preço médio por animal vendido (R$)</h2><p class="formula">Média dos preços das propriedades: venda de animais ÷ animais vendidos</p></div><div class="pill" id="pl-c8"><b>–</b><small>Total no período</small></div></div><div class="cv"><canvas id="c8"></canvas></div></section>
   </div>
+  <section class="destaques" id="conf" hidden>
+    <h2>Conferência com a planilha do SisATeG</h2>
+    <p class="d-resumo">Envie a planilha (.xlsx) do SisATeG de <b>um mês</b>. O painel casa cada linha pelo <b>ID da Visita</b> (ou pelo <b>ID da Propriedade</b>, se a planilha não tiver ID da Visita) e compara <b>Receitas</b> com a receita bruta (mais venda de bem e recebimento de empréstimo, que o SisATeG soma em Receitas), <b>Despesas Diretas</b> com a despesa direta e <b>animais vendidos (se a planilha trouxer)</b> com a produção. A planilha só traz propriedades <b>ativas</b>, então por padrão o painel também só conta as ativas; escolha <b>Ativas e inativas</b> para ver também as inativas que estão só no painel. Diferenças de até R$ 1,00 (ou 1 animal) são ignoradas.</p>
+    <div class="macro-ctl"><label>Planilha do SisATeG<input type="file" id="confArq" accept=".xlsx,.xls" autocomplete="off"></label>
+      <label>Propriedades do painel<select id="confSit" autocomplete="off"><option value="ativas">Só ativas (como a planilha)</option><option value="todas">Ativas e inativas</option></select></label>
+      <label>Técnico<select id="confTec" autocomplete="off"><option value="">Todos os técnicos</option></select></label></div>
+    <div id="confCorpo"><p class="d-vazio">Escolha a planilha para conferir.</p></div>
+  </section>
   <section class="detalhe" id="aba-tabela" hidden><div class="d-topo"><h2>Detalhe mensal</h2><span class="xls-msg" id="xlsMsg"></span><button class="btn sec" id="btnXls" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M5 21h14"/></svg>Baixar Excel</button></div><div class="rolagem"><table id="tab"></table></div></section>
 </div>
 <script>
@@ -281,7 +291,7 @@ function desenha(id, rotulos, valores, cor, casas, moeda, parcial, aceitaNegativ
     options:{casas, moedaTxt:moeda, responsive:true, maintainAspectRatio:false, animation: reduz ? false : undefined,
       interaction:{mode:'index', intersect:false},
       layout:{padding:{top:38, right:14, left:4}},
-      plugins:{legend:{display:false}, tooltip:{callbacks:{label: c => moeda ? 'R$ ' + fmt(c.parsed.y, casas) + (id === 'c8' ? ' por animal' : '') : fmt(c.parsed.y, casas) + ' animais'}}},
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label: c => moeda ? 'R$ ' + fmt(c.parsed.y, casas) + (id === 'c8' || id === 'c11' ? ' por animal' : '') : fmt(c.parsed.y, casas) + ' animais'}}},
       scales:{
         x:{grid:{display:false}, ticks:{maxRotation:0, autoSkip:true, maxTicksLimit:12,
            callback(val){ const l = this.getLabelForValue(val); return l.slice(5) + '/' + l.slice(2,4); }}},
@@ -410,6 +420,7 @@ async function atualiza(){
   setPill('c3', soma('margem_bruta'), true, 'Total no período', 2);
   setPill('c4', soma('margem_venda'), true, 'Total no período', 2);
   setPill('c5', media('producao_media_produtor'), false, 'Média no período', 0);
+  { const sp = soma('producao'); setPill('c11', sp ? soma('despesa_direta')/sp : null, true, 'Média no período', 2); }
   desenha('c1', m, d.map(x=>x.receita_bruta), css('--c-receita'), 2, true, parcial);
   desenha('c6', m, d.map(x=>x.venda_animais), css('--c-venda'), 2, true, parcial);
   desenha('c7', m, d.map(x=>x.despesa_direta), css('--c-desp'), 2, true, parcial);
@@ -418,6 +429,7 @@ async function atualiza(){
   desenha('c4', m, d.map(x=>x.margem_venda), css('--c-mvenda'), 2, true, parcial, true);
   desenha('c2', m, d.map(x=>x.producao), css('--c-prod'), 0, false, parcial);
   desenha('c5', m, d.map(x=>x.producao_media_produtor), css('--c-media'), 0, false, parcial);
+  desenha('c11', m, d.map(x=>(+x.producao > 0 ? x.despesa_direta/x.producao : null)), css('--c-desp'), 2, true, parcial);
   const grupos = ['Receita bruta','Venda de animais','Preço por animal (R$)','Despesa direta','Animais vendidos','Margem da atividade','Margem da venda de animais','Animais/produtor'];
   $('tab').innerHTML = '<thead><tr><th rowspan="2">Mês</th><th rowspan="2" class="sep">Com lançamento</th>' +
     grupos.map(g=>`<th class="g" colspan="2">${g}</th>`).join('') + '</tr><tr>' + grupos.map(()=>'<th class="sep">Valor</th><th>Var.</th>').join('') + '</tr></thead><tbody>' +
@@ -536,8 +548,133 @@ async function carregaTipos(q){
     <p class="d-resumo">Não entram na despesa direta nem na receita bruta (margem), mas a <b>soma de todas as despesas</b> inclui o investimento e o pagamento de empréstimo, como no Total Despesas do SisATeG. Total geral de receitas (com venda de bem e recebimento de empréstimo): <b>${brl2(d.receita_total)}</b>.</p>
     <div class="d-grid"><div class="d-bloco"><h3>Despesas: investimento e pagamento de empréstimo</h3>${tab(d.despesa_fora)}</div><div class="d-bloco"><h3>Receitas fora da receita bruta: venda de bem e recebimento de empréstimo</h3>${tab(d.receita_fora)}</div></div>`;
 }
+const numC = x => { if (x == null || x === '') return 0; if (typeof x === 'number') return isFinite(x) ? x : 0;
+  let t = String(x).trim().replace(/\s|R\$/g, '');
+  if (t.includes(',')) t = t.replace(/\./g, '').replace(',', '.');          // 1.234,56 (pt-BR)
+  else if ((t.match(/\./g) || []).length > 1) t = t.replace(/\./g, '');    // 1.234.567 (milhar)
+  const n = parseFloat(t); return isFinite(n) ? n : 0; };   // "7.5" (texto com ponto) = 7,5
+const normC = t => String(t ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+async function conferePlanilha(file){
+  const box = $('confCorpo'); box.innerHTML = '<p class="d-vazio">Lendo a planilha e comparando…</p>';
+  try {
+    const wb = XLSX.read(await file.arrayBuffer(), {type: 'array'});
+    // procura a aba e a linha de cabeçalho que tenham "ID Visita"
+    let cab = null, dados = null;
+    for (const nome of wb.SheetNames) {
+      const ws = wb.Sheets[nome];
+      // algumas planilhas trazem o tamanho (dimension) errado, ex.: só 3 colunas; recalcula pelo que existe de fato nas células
+      let r1 = 1e9, c1 = 1e9, r2 = -1, c2 = -1;
+      Object.keys(ws).forEach(k => { if (k[0] === '!') return; const a = XLSX.utils.decode_cell(k);
+        if (a.r < r1) r1 = a.r; if (a.c < c1) c1 = a.c; if (a.r > r2) r2 = a.r; if (a.c > c2) c2 = a.c; });
+      if (r2 >= 0) ws['!ref'] = XLSX.utils.encode_range({s: {r: r1, c: c1}, e: {r: r2, c: c2}});
+      const m = XLSX.utils.sheet_to_json(ws, {header: 1, defval: null, raw: true});
+      const hi = m.slice(0, 30).findIndex(l => l && l.some(c => normC(c) === 'id visita' || normC(c) === 'id propriedade'));   // a planilha da apicultura traz uma linha por propriedade (sem ID Visita)
+      if (hi >= 0) { cab = m[hi].map(normC); dados = m.slice(hi + 1); break; }
+    }
+    if (!cab) { box.innerHTML = '<p class="d-vazio">Não encontrei as colunas “ID Propriedade” (ou “ID Visita”) na planilha. Ela precisa ter: ID Propriedade, Mês, Ano, Total Receitas e Total Despesas.</p>'; return; }
+    const col = n => cab.indexOf(normC(n));
+    const idxVis = col('ID Visita'), temVis = idxVis >= 0;
+    const cRec = col('Total Receitas') >= 0 ? col('Total Receitas') : col('Receitas');
+    const cDirAll = col('Despesas Diretas');
+    const cDesp = col('Total Despesas');
+    const faltam = [];
+    if (col('ID Propriedade') < 0 && !temVis) faltam.push('ID Propriedade');
+    ['Mês', 'Ano'].forEach(n => { if (col(n) < 0) faltam.push(n); });
+    if (cRec < 0) faltam.push('Total Receitas');
+    if (cDirAll < 0 && cDesp < 0) faltam.push('Total Despesas');
+    if (faltam.length) { box.innerHTML = '<p class="d-vazio">Faltam colunas na planilha: ' + faltam.join(', ') + '.</p>'; return; }
+    // despesa direta = Total Despesas menos o que o painel não conta (mão de obra familiar, pagamento de empréstimo e aquisição de bem), se a planilha não trouxer "Despesas Diretas" pronta
+    const cFam = col('Mão de obra familiar'), cEmp = col('Empréstimo - pagamento'), cInv = col('Investimento - aquisição de bem');
+    const cExtra = cab.map((c, i) => c.includes('formacao de forrageiras') ? i : -1).filter(i => i >= 0);   // o painel não conta aleitamento nem formação de forrageiras na despesa direta
+    const cMel0 = cab.map((c, i) => c.startsWith('qtd ') ? i : -1).filter(i => i >= 0);
+    const cVenda = cMel0.filter(i => cab[i].startsWith('qtd venda') && !/\bkg\b|\(kg\)|abatido/.test(cab[i]));   // suinocultura: soma só as colunas de venda em cabeças (não conta venda em kg de animal abatido)
+    const cMel = cVenda.length ? cVenda : cMel0;   // a planilha traz a quantidade vendida por categoria (Qtd Fêmeas…, Qtd Macho…, Qtd Matrizes…): a soma é o total de animais
+    const cProd = col('Animais Vendidos') >= 0 ? col('Animais Vendidos') : -1;
+    const temProd = cMel.length > 0 || cProd >= 0;
+    const despDireta = l => { if (cDirAll >= 0) return numC(l[cDirAll]); const x = i => i >= 0 ? numC(l[i]) : 0; return x(cDesp) - x(cFam) - x(cEmp) - x(cInv) - cExtra.reduce((s, i) => s + numC(l[i]), 0); };
+    const melKg = l => cProd >= 0 ? numC(l[cProd]) : cMel.reduce((s, i) => s + numC(l[i]), 0);
+    const g = (l, n) => { const c = col(n); return c >= 0 ? l[c] : null; };
+    const linhasTodas = [], meses = new Set();
+    dados.forEach(l => { const idv = temVis && g(l, 'ID Visita') != null ? String(g(l, 'ID Visita')).trim() : '', idp = String(g(l, 'ID Propriedade') ?? '').trim(); if (!/^\d+$/.test(temVis ? idv : idp)) return;   // ignora a linha "Total"
+      const mes = String(Math.round(numC(g(l, 'Ano')))) + '-' + String(Math.round(numC(g(l, 'Mês')))).padStart(2, '0'); meses.add(mes);
+      linhasTodas.push({visita: idv || idp, id: idp, propriedade: g(l, 'Propriedade'), municipio: g(l, 'Município'), tecnico: String(g(l, 'Técnico') ?? '').trim(),
+        rec: numC(l[cRec]), desp: despDireta(l), prod: temProd ? melKg(l) : 0}); });
+    let linhas = linhasTodas, nTreino = 0;
+    if (!linhas.length) { box.innerHTML = '<p class="d-vazio">Não encontrei linhas de dados abaixo do cabeçalho.</p>'; return; }
+    if (meses.size !== 1) { box.innerHTML = '<p class="d-vazio">A planilha tem mais de um mês (' + [...meses].join(', ') + '). Envie a de um mês só.</p>'; return; }
+    const mes = [...meses][0];
+    const r = await fetch('/api/conferencia?mes=' + mes); const d = r.ok ? await r.json() : {erro: 'HTTP ' + r.status};
+    if (d.erro) { box.innerHTML = '<p class="d-vazio">Não consegui ler o painel: ' + d.erro + '</p>'; return; }
+    const compFam = cDirAll < 0 && cFam < 0;   // planilha sem "Despesas Diretas" nem coluna de mão de obra familiar (ela está dentro de "Mão de obra")
+    const P0 = d.itens; P0.forEach(p => { p.recC = p.rec + (p.rec_fora || 0); if (compFam) p.desp += (p.fam || 0); });
+    const treinoSet = new Set((d.treino || []).map(String));   // projetos de treinamento não entram no painel: ficam fora da conferência
+    linhas = linhasTodas.filter(l => !treinoSet.has(l.id)); nTreino = linhasTodas.length - linhas.length;
+    // filtro por técnico: a lista vem da própria planilha (refeita a cada planilha nova)
+    const tecs = [...new Set(linhas.map(l => l.tecnico).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+    if (file !== confTecArq) { $('confTec').innerHTML = '<option value="">Todos os técnicos</option>' + tecs.map(t => `<option>${String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;')}</option>`).join(''); confTecArq = file; }
+    const tecSel = $('confTec').value;
+    if (tecSel) linhas = linhas.filter(l => l.tecnico === tecSel);
+    if (!linhas.length) { box.innerHTML = '<p class="d-vazio">Só há propriedades de treinamento nessa planilha.</p>'; return; }
+    // casa pelo ID da Visita; se o servidor ainda não tem a coluna id_visita, casa pela propriedade (e avisa)
+    const porVisita = new Map(), porProp = new Map();
+    P0.forEach(p => { porProp.set(p.id, p); if (p.id_visita) String(p.id_visita).split(',').forEach(v => porVisita.set(v.trim(), p)); });
+    const usadas = `<details class="mini"><summary>Colunas da planilha usadas na conferência</summary><p>Receita: ${cab[cRec] ?? '—'} | Despesa: ${cDirAll >= 0 ? cab[cDirAll] : (cab[cDesp] ?? '—') + ' menos [' + [cFam, cEmp, cInv, ...cExtra].filter(i => i >= 0).map(i => cab[i]).join(', ') + ']'} | Animais: ${cProd >= 0 ? cab[cProd] : (cMel.length ? cMel.map(i => cab[i]).join(' + ') : 'não encontrada')}.</p></details>`;
+    const aviso = usadas + (compFam ? '<p class="d-vazio">Esta planilha não separa a mão de obra familiar (ela está dentro de “Mão de obra”). Por isso a despesa do painel nesta conferência é <b>despesa direta + mão de obra familiar</b>, comparada com Total Despesas sem empréstimo, investimento.</p>' : '') + (temProd ? '' : '<p class="d-vazio">A planilha não tem coluna de animais vendidos: conferi só receita e despesa.</p>') + (nTreino ? `<p class="d-vazio">${nTreino} visita(s) de projeto de Treinamento foram ignoradas (esse projeto não entra no painel).</p>` : '') + (temVis && !d.com_visita ? '<p class="d-vazio">⚠ O servidor ainda não tem o ID da Visita. Rode o atualizar_ovino.bat. Por enquanto a conferência casou pela propriedade.</p>' : (temVis ? '' : '<p class="d-vazio">Esta planilha não tem ID Visita: casei por ID da Propriedade.</p>'));
+    const grupo = new Map(), soArq = [], soZero = [];
+    linhas.forEach(l => { const p = (temVis && d.com_visita) ? porVisita.get(l.visita) : porProp.get(l.id);
+      if (!p) { (Math.abs(l.rec) + Math.abs(l.desp) + Math.abs(l.prod) <= 1 ? soZero : soArq).push(l); return; }   // visita sem nenhum lançamento: o painel não mostra (esperado)
+      const o = grupo.get(p) || {p, rec: 0, desp: 0, prod: 0, visitas: [], propriedade: l.propriedade, municipio: l.municipio, id: l.id};
+      o.tecnico = o.tecnico || l.tecnico; o.rec += l.rec; o.desp += l.desp; o.prod += l.prod; o.visitas.push(l.visita); grupo.set(p, o); });
+    // propriedade que só tem mão de obra familiar (sem receita, sem despesa direta, sem animais) e não está na planilha: não é lançamento relevante
+    const soFam = P0.filter(p => !grupo.has(p) && (p.fam || 0) > 0 && Math.abs(p.recC) + Math.abs(p.desp - (compFam ? p.fam : 0)) + Math.abs(p.prod) <= 1);
+    const P = P0.filter(p => !soFam.includes(p) && ($('confSit').value === 'todas' || p.ativa || grupo.has(p)) && (!tecSel || grupo.has(p) || normC(p.tecnico) === normC(tecSel)));   // a planilha só traz propriedades ativas; "Ativas e inativas" mostra também as inativas do painel
+    const A = linhas, dif = [], soPan = P.filter(p => !grupo.has(p));
+    grupo.forEach(o => { const dr = o.p.recC - o.rec, dd = o.p.desp - o.desp, dp = o.p.prod - o.prod;
+      if (Math.abs(dr) > 1 || Math.abs(dd) > 1 || (temProd && Math.abs(dp) > 1)) dif.push({a: o, p: o.p, dr, dd, dp}); });
+    dif.sort((x, y) => (Math.abs(y.dr) + Math.abs(y.dd)) - (Math.abs(x.dr) + Math.abs(x.dd)));
+    const soma = (it, k) => it.reduce((s, x) => s + x[k], 0);
+    const ok = !dif.length && !soArq.length && !soPan.length && [['rec', 'recC'], ['desp', 'desp'], ...(temProd ? [['prod', 'prod']] : [])].every(([a, b]) => Math.abs(soma(A, a) - soma(P, b)) <= 1);
+    const lin = (rot, k, f, kp) => { const a = soma(A, k), p = soma(P, kp || k), df = p - a; return `<tr><td>${rot}</td><td class="n">${f(a)}</td><td class="n">${f(p)}</td><td class="n ${Math.abs(df) > 1 ? 'neg' : ''}">${(df > 0 ? '+' : '') + f(df)}</td></tr>`; };
+    const R = x => 'R$ ' + nf.format(Math.round(x * 100) / 100), L = x => nf.format(Math.round(x)) + ' animais';
+    const cnt = (rot, n, cor) => `<div class="d-item"><span>${rot}</span><span class="${cor || ''}"><b>${nf.format(n)}</b></span></div>`;
+    // de que tipo é a receita do painel em cada propriedade (e, se for um lançamento suspeito, o item e o aviso)
+    const escH = s => String(s ?? '').replace(/[&<>]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;'}[c]));
+    const tiposD = d.tipos || {}, revD = d.revisar || {};
+    // explica a diferença: se é de receita, mostra a receita do painel por tipo; se é de despesa, a despesa por tipo (com o que o painel deixa fora da despesa direta); se é de animais, as quantidades
+    const rotClasse = {'Outras despesas': ' [fora da despesa direta]', 'Aleitamento (fora do total)': ' [aleitamento: fora do total]', 'Fora das despesas': ' [empréstimo/investimento: fora]', 'Fora da receita bruta': ' [fora da receita bruta]'};
+    const linhaTipo = (L, g) => L.filter(t => t[0] === g).map(t => `${t[2]} ${R(t[3])}${rotClasse[t[1]] ?? ''}`).join('; ') || 'nenhum lançamento';
+    const oQue = (p, x) => {
+      const L = tiposD[p.id] || [], partes = [];
+      if (Math.abs(x.dr) > 1) partes.push('Receita no painel: ' + linhaTipo(L, 'Receita'));
+      if (Math.abs(x.dd) > 1) partes.push('Despesa no painel: ' + linhaTipo(L, 'Despesa'));
+      if (temProd && Math.abs(x.dp) > 1) partes.push(`Animais: painel ${nf.format(Math.round(p.prod))} x planilha ${nf.format(Math.round(x.a.prod))}`);
+      (revD[p.id] || []).forEach(r => partes.push(/^Lançado com data/.test(r.motivo || '') ? `⚠ ${r.item} (${R(r.valor)}): ${r.motivo}` : `⚠ ${r.item} lançado em "${r.subgrupo}" (${R(r.valor)}): ver aba Revisar lançamentos`));
+      return partes.join(' | ');
+    };
+    const tabDif = dif.length ? `<div class="rolagem" style="max-height:460px"><table class="t-simples"><thead><tr><th>${temVis ? 'ID Visita' : 'ID Propriedade'}</th><th>Propriedade</th><th>Município</th><th>Técnico</th><th class="n">Receita planilha</th><th class="n" title="receita bruta + venda de bem e recebimento de empréstimo (o SisATeG soma tudo em Receitas)">Receita painel</th><th class="n">Δ receita</th><th class="n">Despesa planilha</th><th class="n">Despesa painel</th><th class="n">Δ despesa</th><th class="n">Δ animais</th><th title="De que é a diferença: o que o painel tem lançado nesta propriedade no mês">De que é a diferença</th></tr></thead><tbody>` +
+      dif.slice(0, 300).map(x => `<tr><td>${x.a.visitas.join(', ')}</td><td>${x.a.propriedade ?? ''}</td><td>${x.a.municipio ?? ''}</td><td>${x.a.tecnico ?? ''}</td><td class="n">${R(x.a.rec)}</td><td class="n">${R(x.p.recC)}</td><td class="n">${R(x.dr)}</td><td class="n">${R(x.a.desp)}</td><td class="n">${R(x.p.desp)}</td><td class="n">${R(x.dd)}</td><td class="n">${nf.format(Math.round(x.dp))}</td><td>${escH(oQue(x.p, x))}</td></tr>`).join('') + `</tbody></table></div>${dif.length > 300 ? `<p class="d-resumo">Mostrando as 300 maiores de ${dif.length}. Baixe o arquivo para ver todas.</p>` : ''}` : '';
+    const nomeA = l => `visita ${l.visita} · ${l.propriedade ?? ''} (${l.municipio ?? ''})`, nomeP = p => `${p.id} ${p.propriedade ?? ''} (${p.municipio ?? ''})`;
+    const lst = (l, f) => l.slice(0, 40).map(f).join('; ') + (l.length > 40 ? '; …' : '');
+    box.innerHTML = `${aviso}<p class="d-resumo"><b>Mês conferido: ${mes}</b> — ${ok ? '<span class="pos"><b>tudo bate com o painel</b></span>' : '<span class="neg"><b>há diferenças</b></span>'}</p>
+      <div class="d-bloco" style="max-width:760px;margin-bottom:14px"><h3>Totais</h3><table class="t-simples"><thead><tr><th></th><th class="n">Planilha</th><th class="n">Painel</th><th class="n">Diferença</th></tr></thead><tbody>
+        ${lin('Receitas (receita bruta + venda de bem e empréstimo)', 'rec', R, 'recC')}${lin('Despesas diretas', 'desp', R)}${temProd ? lin('Animais vendidos (cabeças)', 'prod', L) : ''}</tbody></table></div>
+      <div class="d-bloco" style="max-width:760px;margin-bottom:14px"><h3>${temVis ? 'Visitas (casadas pelo ID da Visita)' : 'Propriedades (casadas pelo ID da Propriedade)'}</h3>
+        ${cnt('Na planilha', A.length)}${cnt('No painel (propriedades neste mês)', P.length)}${cnt('Com valor diferente', dif.length, dif.length ? 'neg' : 'pos')}
+        ${cnt('Só na planilha (faltam no painel)', soArq.length, soArq.length ? 'neg' : 'pos')}${soZero.length ? cnt('Visitas sem lançamento de suinocultura (esperado, não entram no painel)', soZero.length, '') : ''}${cnt('Só no painel (não estão na planilha)', soPan.length, soPan.length ? 'neg' : 'pos')}</div>
+      ${soArq.length ? `<details class="mini" open><summary>Só na planilha</summary><p>${lst(soArq, nomeA)}</p></details>` : ''}${soZero.length ? `<details class="mini"><summary>Visitas sem lançamento (valores zerados na planilha)</summary><p>${lst(soZero, nomeA)}</p></details>` : ''}
+      ${soPan.length ? `<details class="mini"><summary>Só no painel</summary><p>${lst(soPan, nomeP)}</p></details>` : ''}${soFam.length ? `<details class="mini"><summary>Só mão de obra familiar (${soFam.length}) — fora da conferência</summary><p>Sem receita e sem despesa direta; a planilha não traz essas propriedades: ${lst(soFam, nomeP)}</p></details>` : ''}
+      ${dif.length ? `<h3 class="c-tit">Visitas com valor diferente (maiores diferenças primeiro)</h3>${tabDif}<p><button type="button" id="confBaixa" class="btn">Baixar todas as diferenças (.xlsx)</button></p>` : ''}`;
+    const bt = $('confBaixa');
+    if (bt) bt.onclick = () => { const ws = XLSX.utils.json_to_sheet(dif.map(x => ({'ID Visita': x.a.visitas.join(', '), 'ID Propriedade': x.a.id, 'Propriedade': x.a.propriedade, 'Município': x.a.municipio, 'Técnico': x.a.tecnico, 'Receita planilha': x.a.rec, 'Receita painel': x.p.recC, 'Δ receita': x.dr, 'Despesa planilha': x.a.desp, 'Despesa painel': x.p.desp, 'Δ despesa': x.dd, 'Produção planilha': x.a.prod, 'Produção painel': x.p.prod, 'Δ produção': x.dp, 'De que é a diferença': oQue(x.p, x)})).concat(soArq.map(x => ({'ID Visita': x.visita, 'ID Propriedade': x.id, 'Propriedade': x.propriedade, 'Município': x.municipio, 'Técnico': x.tecnico, 'Receita planilha': x.rec, 'Despesa planilha': x.desp, 'Produção planilha': x.prod, 'Observação': 'só na planilha'}))));
+      const w2 = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(w2, ws, 'Diferenças'); XLSX.writeFile(w2, 'conferencia_' + mes + '.xlsx'); };
+  } catch (e) { box.innerHTML = '<p class="d-vazio">Erro ao conferir: ' + e.message + '</p>'; }
+}
+let confArquivo = null, confTecArq = null;
+$('confArq').onchange = ev => { confArquivo = ev.target.files[0]; confTecArq = null; if (confArquivo) conferePlanilha(confArquivo); };
+$('confSit').onchange = () => { if (confArquivo) conferePlanilha(confArquivo); };
+$('confTec').onchange = () => { if (confArquivo) conferePlanilha(confArquivo); };
 function mostraAba(nome){
-  const alvos = {graficos:'aba-graficos', destaques:'destaques', causas:'causas', tipos:'tipos', tabela:'aba-tabela'};
+  const alvos = {graficos:'aba-graficos', destaques:'destaques', causas:'causas', tipos:'tipos', conf:'conf', tabela:'aba-tabela'};
   Object.entries(alvos).forEach(([n, id]) => { $(id).hidden = (n !== nome); });
   document.querySelectorAll('.aba').forEach(b => { const on = b.dataset.aba === nome; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
   if (nome === 'graficos' || nome === 'causas') Object.values(charts).forEach(c => c.resize());

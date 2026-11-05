@@ -21,7 +21,8 @@ SELECT v.id_propriedade, v.propriedade, v.produtor,
        v.supervisor_sisateg, v.municipio, v.uf, v.area_total, v.area_produtiva,
        v.projeto, v.qtd_projetos, v.inicio_projeto, v.fim_projeto, v.status_vinculo, v.motivo_desativacao, v.ativa,
        m.mes, m.animais_vendidos, m.venda_animais_rs, m.venda_cab_rs, m.receita_bruta, m.despesa_direta,
-       (m.receita_bruta - m.despesa_direta) AS margem_bruta
+       (m.receita_bruta - m.despesa_direta) AS margem_bruta,
+       m.mao_obra_familiar, m.despesa_total
 FROM public.vw_suino_propriedades v
 JOIN public.resumo_suino_mensal m ON m.id_propriedade = v.id_propriedade
 LEFT JOIN public.ranking_tecnicos k2 ON btrim(k2.tecnico_responsavel, E' \t\r\n') = COALESCE(m.tecnico, v.tecnico);

@@ -16,3 +16,7 @@ Depois abrir o painel e apertar Ctrl+F5.
 Teste local: `uvicorn app.main:app --port 8004` e abrir http://localhost:8004
 
 Se um passo der erro, as tabelas ficam como estavam (trocas "tudo ou nada"). Não siga para o passo seguinte.
+
+## Histórico desde 2023-01 (feito uma vez, quando o SQL do resumo mudou)
+Na pasta da Suinocultura:  `python scripts/incluir_2023.py`  (refaz o resumo completo e copia para o servidor).
+Vercel: a variável MES_INICIO tem que ser 2023-01 (ou ser removida).

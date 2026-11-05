@@ -56,7 +56,7 @@ WITH ativas AS (  -- propriedades ATIVAS que têm vínculo ATIVO de SUINOCULTURA
 lanc_ids AS (  -- toda propriedade que já teve lançamento de suinocultura (ativa ou não) desde o início da base
   SELECT DISTINCT id_propriedade FROM public.sisateg_receita_despesa
   WHERE atividade = 'SUINOCULTURA' AND status_item = 'ATIVO' AND tipo_registro = 'PRINCIPAL'
-    AND dt_referencia >= DATE '2024-06-01'
+    AND dt_referencia >= DATE '2023-01-01'
 ),
 todas AS (  -- ativas + inativas que têm lançamento (ativa = TRUE/FALSE)
   SELECT id_propriedade, produtor, tecnico_a, supervisor_a, TRUE AS ativa FROM ativas
@@ -118,15 +118,32 @@ CREATE INDEX ON public.resumo_suino_propriedades (id_propriedade);
 CREATE INDEX ON public.resumo_suino_propriedades (tecnico);
 
 -- ---------------------------------------------------------------------
+-- Itens da suinocultura com o MÊS CORRIGIDO e SEM visitas excluídas (a planilha do SisATeG conta assim):
+--  * mês = referência da visita (vale mesmo que os itens tenham data bem mais antiga, ex.: item copiado de visita antiga);
+--    só ignora referência MUITO ANTERIOR aos itens (mais de 366 dias antes);
+--  * visita EXCLUÍDA no SisATeG (dt_exclusao_visita preenchida) não entra.
+DROP TABLE IF EXISTS public.resumo_suino_rd;
+CREATE TABLE public.resumo_suino_rd AS
+SELECT r.* FROM public.sisateg_receita_despesa r
+WHERE r.atividade = 'SUINOCULTURA' AND r.status_item = 'ATIVO' AND r.tipo_registro = 'PRINCIPAL'
+  AND r.dt_referencia >= DATE '2023-01-01'
+  AND NOT EXISTS (SELECT 1 FROM public.sisateg_rel_listar_visita lvx WHERE lvx.id_visita::text = r.id_visita::text AND lvx.dt_exclusao_visita IS NOT NULL);
+UPDATE public.resumo_suino_rd b SET dt_referencia = to_date(lv.referencia_visita || '-01', 'YYYY-MM-DD')
+FROM public.sisateg_rel_listar_visita lv
+WHERE lv.id_visita::text = b.id_visita::text AND lv.referencia_visita ~ '^[0-9]{4}-[0-9]{2}$'
+  AND (to_date(lv.referencia_visita || '-01', 'YYYY-MM-DD') - b.dt_referencia::date) >= -366;
+CREATE INDEX ON public.resumo_suino_rd (id_propriedade, id_visita);
+ANALYZE public.resumo_suino_rd;
+
 DROP TABLE IF EXISTS public.resumo_suino_mensal;
 CREATE TABLE public.resumo_suino_mensal AS
 WITH base AS (
   SELECT r.*
-  FROM public.sisateg_receita_despesa r
+  FROM public.resumo_suino_rd r
   WHERE r.atividade = 'SUINOCULTURA'
     AND r.status_item = 'ATIVO'
     AND r.tipo_registro = 'PRINCIPAL'
-    AND r.dt_referencia BETWEEN DATE '2024-06-01' AND DATE '2026-12-31'
+    AND r.dt_referencia BETWEEN DATE '2023-01-01' AND DATE '2026-12-31'
     AND r.id_propriedade IN (SELECT id_propriedade FROM public.resumo_suino_propriedades)
 ),
 q AS (
@@ -187,9 +204,9 @@ CREATE INDEX ON public.resumo_suino_mensal (mes);
 DROP TABLE IF EXISTS public.resumo_suino_despesa_subgrupo;
 CREATE TABLE public.resumo_suino_despesa_subgrupo AS
 WITH base AS (
-  SELECT r.* FROM public.sisateg_receita_despesa r
+  SELECT r.* FROM public.resumo_suino_rd r
   WHERE r.atividade = 'SUINOCULTURA' AND r.status_item = 'ATIVO' AND r.tipo_registro = 'PRINCIPAL'
-    AND r.dt_referencia BETWEEN DATE '2024-06-01' AND DATE '2026-12-31'
+    AND r.dt_referencia BETWEEN DATE '2023-01-01' AND DATE '2026-12-31'
     AND r.grupo = 'Despesa'
     AND r.id_propriedade IN (SELECT id_propriedade FROM public.resumo_suino_propriedades)
 ),
@@ -217,9 +234,9 @@ CREATE INDEX ON public.resumo_suino_despesa_subgrupo (id_propriedade, mes);
 DROP TABLE IF EXISTS public.resumo_suino_tipo;
 CREATE TABLE public.resumo_suino_tipo AS
 WITH base AS (
-  SELECT r.* FROM public.sisateg_receita_despesa r
+  SELECT r.* FROM public.resumo_suino_rd r
   WHERE r.atividade = 'SUINOCULTURA' AND r.status_item = 'ATIVO' AND r.tipo_registro = 'PRINCIPAL'
-    AND r.dt_referencia BETWEEN DATE '2024-06-01' AND DATE '2026-12-31'
+    AND r.dt_referencia BETWEEN DATE '2023-01-01' AND DATE '2026-12-31'
     AND r.grupo IN ('Receita','Despesa')
     AND r.id_propriedade IN (SELECT id_propriedade FROM public.resumo_suino_propriedades)
 ),

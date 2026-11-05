@@ -32,7 +32,7 @@ def _db_url():
 DB_URL = _db_url()
 TABLE = os.environ.get("TABLE_NAME", "public.vw_suino_mensal")
 PROPS = os.environ.get("PROPS_NAME", "public.vw_suino_propriedades")
-MES_INICIO = os.environ.get("MES_INICIO", "2024-06")  # início da base completa (YYYY-MM)
+MES_INICIO = os.environ.get("MES_INICIO", "2023-01")  # início da base completa (YYYY-MM)
 if not re.fullmatch(r"[A-Za-z0-9_]+\.[A-Za-z0-9_]+", TABLE):
     raise RuntimeError("TABLE_NAME inválido (use schema.nome)")
 
@@ -444,6 +444,45 @@ def tipos(supervisor: str | None = None, tecnico: str | None = None, propriedade
     return {"de": ms["a"] if ms else None, "ate": ms["b"] if ms else None,
             "receita_bruta": rb, "receita_fora": rf, "despesa_direta": dd, "despesa_outras": od, "despesa_fora": df,
             "despesa_total": desp_total, "receita_total": rec_total, "margem_bruta": rb["total"] - dd["total"]}
+
+
+@app.get("/api/conferencia")
+def conferencia(mes: str = Query(..., description="YYYY-MM")):
+    """Aba 'Conferência': receita bruta, despesa direta e animais vendidos do painel, por propriedade, em um mês (para comparar com a planilha do SisATeG)."""
+    def ler(com_fam):
+        fam = "SUM(mao_obra_familiar)" if com_fam else "0"
+        with engine.connect() as con:
+            return con.execute(text(f"""SELECT id_propriedade::text AS id, MAX(propriedade) AS propriedade, MAX(municipio) AS municipio, MAX(tecnico) AS tecnico, MAX(projeto) AS projeto, BOOL_OR(COALESCE(ativa, FALSE)) AS ativa,
+                       SUM(receita_bruta) AS rec, SUM(despesa_direta) AS desp, {fam} AS fam, SUM(animais_vendidos) AS prod
+                     FROM {TABLE} WHERE mes = :m AND COALESCE(projeto, '') NOT ILIKE 'TREINAMENTO%'
+                     GROUP BY id_propriedade"""), {"m": mes}).mappings().all()
+    treino, fora, tipos = [], {}, {}
+    try:   # propriedades de projetos de TREINAMENTO: não entram no painel, então a conferência também as ignora
+        with engine.connect() as con:
+            treino = [r[0] for r in con.execute(text(f"SELECT DISTINCT id_propriedade::text FROM {PROPS} WHERE COALESCE(projeto, '') ILIKE 'TREINAMENTO%'"))]
+    except Exception:
+        treino = []
+    try:   # receita que o SisATeG soma em "Receitas" mas fica fora da receita bruta (venda de bem e recebimento de empréstimo) + tipo de cada receita/despesa (de onde vem a diferença)
+        with engine.connect() as con:
+            for r in con.execute(text(f"""SELECT id_propriedade::text AS id, grupo, classe, subgrupo, SUM(valor) AS v FROM {TIPO}
+                      WHERE mes = :m AND COALESCE(projeto, '') NOT ILIKE 'TREINAMENTO%' GROUP BY 1, 2, 3, 4
+                      HAVING ABS(COALESCE(SUM(valor), 0)) > 0"""), {"m": mes}).mappings():
+                tipos.setdefault(r["id"], []).append([r["grupo"], r["classe"], r["subgrupo"], float(r["v"] or 0)])
+                if r["classe"] == "Fora da receita bruta":
+                    fora[r["id"]] = fora.get(r["id"], 0.0) + float(r["v"] or 0)
+    except Exception:
+        fora, tipos = {}, {}
+    rows, erro = None, ""
+    for cf in (True, False):   # servidor ainda sem mao_obra_familiar: rode o transferir_resumo.py
+        try:
+            rows = ler(cf); break
+        except Exception as e:
+            erro = str(e).splitlines()[0][:300]
+    if rows is None:
+        return {"erro": erro}
+    return {"mes": mes, "com_visita": False, "treino": treino, "tipos": tipos, "revisar": {},
+            "itens": [{"id": r["id"], "id_visita": None, "propriedade": r["propriedade"], "municipio": r["municipio"], "tecnico": r["tecnico"], "projeto": r["projeto"], "ativa": bool(r["ativa"]), "rec_fora": fora.get(r["id"], 0.0),
+                       "rec": float(r["rec"] or 0), "desp": float(r["desp"] or 0), "fam": float(r["fam"] or 0), "prod": float(r["prod"] or 0)} for r in rows]}
 
 
 @app.get("/health")
